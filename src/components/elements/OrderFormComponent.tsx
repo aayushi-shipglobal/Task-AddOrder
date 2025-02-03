@@ -15,7 +15,7 @@ export const OrderFormComponent = ({name,control,label}:OrderFormComponentProps)
             name={name}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="mb-1">
+                <FormLabel className="mb-1 text-black">
                   {label}<span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -23,7 +23,7 @@ export const OrderFormComponent = ({name,control,label}:OrderFormComponentProps)
                     <Input className="border-none" {...field} />
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="font-normal text-xs" />
               </FormItem>
             )}
           />
