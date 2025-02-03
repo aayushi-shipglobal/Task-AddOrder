@@ -4,6 +4,9 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormComponent } from "./elements/FormComponent";
+import { useState } from "react";
+import { ComboboxDemo } from "@/components/elements/ComboboxDemo";
+import { StepperSidebar } from "./elements/StepperSidebar";
 
 const formSchema = z.object({
   firstName: z.string().min(6, "The customer shipping first name is required."),
@@ -25,9 +28,14 @@ const formSchema = z.object({
   address3: z.string().min(9, "The customer billing address 1 is required."),
   address4: z.string().min(9, "The customer billing address 3 is required."),
   mark: z.string().min(9, "The customer billing address 2 is required."),
+  pincode1: z.string().min(1, "The customer billing postcode is required."),
+  city1: z.string().min(1, "The customer billing city is required."),
+  state1: z.string().min(1, "The customer billing state is required"),
 });
 
 export const BuyerDetails = () => {
+  const [checked, setChecked] = useState(true);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,17 +61,29 @@ export const BuyerDetails = () => {
       address3: "",
       address4: "",
       mark: "",
+      pincode1: "",
+      city1: "",
+      state1: "",
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
   };
+
   return (
-    <div className="flex lg:flex-row space-x-6">
-      <div className=" bg-white rounded-md w-1/3">hello </div>
-      <div className=" bg-white rounded-md w-2/3">
-        <div className="h-48 bg-gray-50"></div>
+    <div className="flex lg:flex-row space-x-6 justify-center py-12 px-28">
+      <StepperSidebar />
+      <div className=" bg-white rounded-md w-2/3 ">
+        <div className="my-10 bg-white">
+          <p className="font-semibold text-lg my-9 ml-6">
+            Select Pickup Address<span className="text-red-500">*</span>
+          </p>
+          <div className="ml-6 mr-16">
+            {" "}
+            <ComboboxDemo />
+          </div>
+        </div>
         <hr />
         <div>
           <p className="font-semibold text-lg my-9 ml-6">Buyer Shipping Details</p>
@@ -100,26 +120,46 @@ export const BuyerDetails = () => {
                   <FormComponent name="city" label="City" control={form.control} />
                   <FormComponent name="state" label="State" control={form.control} />
                 </div>
-                <div className="font-semibold text-lg my-9 ml-6">Buyer Billing Details</div>
+                <div className="flex items-center ml-6 my-6">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => setChecked(!checked)}
+                    className="w-6 h-6 border border-gray-700"
+                  />
+                  <p className="ml-3 text-sm font-medium">Shipping & Billing Address are same.</p>
+                </div>
+                {!checked && (
+                  <div>
+                    <div className="font-semibold text-lg my-9 ml-6">Buyer Billing Details</div>
 
-                <div className="grid grid-cols-3 space-x-5 my-5 ml-7 mr-20">
-                  <FormComponent name="first" label="First Name" control={form.control} />
-                  <FormComponent name="last" label="Last Name" control={form.control} />
-                  <FormComponent name="mobile" label="Mobile No." control={form.control} />
+                    <div className="grid grid-cols-3 space-x-5 my-5 ml-7 mr-20">
+                      <FormComponent name="first" label="First Name" control={form.control} />
+                      <FormComponent name="last" label="Last Name" control={form.control} />
+                      <FormComponent name="mobile" label="Mobile No." control={form.control} />
+                    </div>
+                    <div className="my-5 ml-7 mr-20">
+                      <FormComponent name="Country" label="Country" control={form.control} />
+                    </div>
+                    <div className="grid grid-cols-2 space-x-5 my-5 ml-7 mr-20">
+                      <FormComponent name="address3" label="Address 1" control={form.control} />
+                      <FormComponent name="mark" label="Landmark" control={form.control} />
+                    </div>
+                    <div className="my-5 ml-7 mr-20">
+                      <FormComponent name="address4" label="Address 2" control={form.control} />
+                    </div>
+                    <div className="grid grid-cols-3 space-x-4  my-5 ml-7 mr-20">
+                      <FormComponent name="pincode1" label="Pincode" control={form.control} />
+                      <FormComponent name="city1" label="City" control={form.control} />
+                      <FormComponent name="state1" label="State" control={form.control} />
+                    </div>
+                  </div>
+                )}
+                <div className="flex justify-end mr-8">
+                  <Button type="submit" className="my-6 mx-3 bg-blue-500 text-white">
+                    Continue
+                  </Button>
                 </div>
-                <div className="my-5 ml-7 mr-20">
-                  <FormComponent name="Country" label="Country" control={form.control} />
-                </div>
-                <div className="grid grid-cols-2 space-x-5 my-5 ml-7 mr-20">
-                  <FormComponent name="address3" label="Address 1" control={form.control} />
-                  <FormComponent name="mark" label="Landmark" control={form.control} />
-                </div>
-                <div className="my-5 ml-7 mr-20">
-                  <FormComponent name="address4" label="Address 2" control={form.control} />
-                </div>
-                <Button type="submit" className="mt-2 bg-black text-white">
-                  Continue
-                </Button>
               </form>
             </Form>
           </div>
