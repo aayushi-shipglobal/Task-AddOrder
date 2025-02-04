@@ -5,10 +5,10 @@ type FormComponentProps = {
   control: any;
   label: string;
   name: string;
-  className?:string;
+  
 };
 
-export const FormComponent = ({ control, label, name,className }: FormComponentProps) => {
+export const FormComponent = ({ control, label, name, }: FormComponentProps) => {
   return (
     <div>
       <FormField
@@ -18,7 +18,7 @@ export const FormComponent = ({ control, label, name,className }: FormComponentP
           <FormItem>
             <FormLabel className="text-gray-700">{label} <span className="text-red-500">*</span></FormLabel>
             <FormControl>
-              <Input {...field} className={`${className}`}/>
+              <Input {...field} />
             </FormControl>
             <FormMessage className="font-normal text-xs"/>
           </FormItem>

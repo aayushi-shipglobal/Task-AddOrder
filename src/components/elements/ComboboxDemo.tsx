@@ -8,20 +8,22 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const frameworks = [
-  {
-    value: "option1",
-    label: "option1",
-  },
-  {
-    value: "option2",
-    label: "option2",
-  },
-];
+type Framework = {
+  value: string;
+  label: string;
+};
 
-export function ComboboxDemo() {
+type ComboboxDemoProps = {
+  label: string;
+  frameworks: Framework[];
+  placeholder:string;
+  value:string;
+  onChange:any;
+};
+
+export function ComboboxDemo({ label, frameworks,placeholder , value, onChange}: ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -32,13 +34,13 @@ export function ComboboxDemo() {
           aria-expanded={open}
           className="justify-between bg-slate-100 text-gray-600 w-full"
         >
-          {value ? frameworks.find((framework) => framework.value === value)?.label : "Select Pickup Address"}
+          {value ? frameworks.find((framework) => framework.value === value)?.label : label}
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
         <Command>
-          <CommandInput placeholder="Select Pickup Address" />
+          <CommandInput placeholder={placeholder} />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
@@ -47,7 +49,7 @@ export function ComboboxDemo() {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    onChange(currentValue === value ? "" : currentValue); 
                     setOpen(false);
                   }}
                 >

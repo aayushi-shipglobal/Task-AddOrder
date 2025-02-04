@@ -1,6 +1,14 @@
+import { useState } from "react";
 import { StepperSidebar } from "./elements/StepperSidebar";
+import { Button } from "@/components/ui/button";
 
-export const ShippingPartner = () => {
+export const ShippingPartner = ({ nextStep, prevStep }) => {
+  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+
+  const handleItemClick = (index: number) => {
+    setSelectedItem(index === selectedItem ? null : index);
+  };
+
   const Array = [
     { title: "ShipGlobal Fedex Advantage", days: "7 - 10", price: "2349" },
     { title: "ShipGlobal USPS Special", days: "7 - 10", price: "2467" },
@@ -57,43 +65,80 @@ export const ShippingPartner = () => {
         </div>
         <div>
           {Array.map((item, index) => (
-            <div className="border border-dashed border-gray-300 rounded-md mt-8 p-4" key={index}>
-              <div className="flex items-center space-x-4">
-                <div className="rounded-full p-2 border border-gray-500 bg-gray-200 cursor-pointer mt-6" />
-
-                <p className="text-lg font-semibold">{item.title}</p>
+            <div
+              key={index}
+              className={`border border-dashed rounded-md mt-8 p-4 ${
+                selectedItem === index ? "bg-blue-100 border-blue-500" : "border-gray-300"
+              }`}
+              onClick={() => handleItemClick(index)}
+            >
+              {" "}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className={`rounded-full p-2 border border-gray-500 cursor-pointer mt-6 ${
+                    selectedItem === index ? "bg-blue-500 " : "border-gray-300 bg-gray-200"
+                  }`}
+                  onClick={() => handleItemClick(index)}
+                /> 
+                  <p className="text-lg font-semibold">{item.title}</p>
+                </div>
 
                 <p className="text-2xl font-bold mt-4">
                   <span className="text-sm font-medium">Rs. </span>
                   {item.price}
                 </p>
               </div>
-
               <p className="text-sm text-gray-400 font-medium ml-11">Estimated Transit: {item.days} Days</p>
             </div>
           ))}
         </div>
         <div>
           {Arrays.map((item, index) => (
-            <div className="border border-dashed border-gray-300 rounded-md mt-8 p-4" key={index}>
+            <div
+              className={`flex justify-between border border-dashed border-gray-300 rounded-md mt-8 p-4 ${
+                selectedItem === index ? "bg-blue-100 border-blue-500" : "border-gray-300"
+              }`}
+              onClick={() => handleItemClick(index)}
+              key={index}
+            >
               <div className="flex items-center space-x-4">
-                <div className="rounded-full p-2 border border-gray-500 bg-gray-200 cursor-pointer mt-6" />
-
-                <p className="text-lg font-semibold">{item.title}</p>
-                <p className="text-lg font-semibold">{item.description}</p>
-                
-
-                <p className="text-2xl font-bold mt-4">
-                  <p className="text-2xl font-bold mt-4">
-                    <span className="text-sm font-medium">Rs. </span>
-                    {item.price}
-                  </p>
-                </p>
+                <div
+                  className={`rounded-full p-2 border border-gray-500  cursor-pointer ${
+                    selectedItem === index ? "bg-blue-500 " : "border-gray-300 bg-gray-200"
+                  }`}
+                  onClick={() => handleItemClick(index)}
+                />
+                <div>
+                  {" "}
+                  <p className="text-lg font-semibold">{item.title}</p>
+                  <p className="text-sm text-red-500 font-semibold ">{item.description}</p>
+                  <p className="text-sm text-gray-400 font-medium ">Estimated Transit: {item.days} Days</p>
+                </div>
               </div>
-
-              <p className="text-sm text-gray-400 font-medium ml-11">Estimated Transit: {item.days} Days</p>
+              <p className="text-2xl font-bold mt-4">
+                <p className="text-2xl font-bold mt-4">
+                  <span className="text-sm font-medium">Rs. </span>
+                  {item.price}
+                </p>
+              </p>
             </div>
           ))}
+        </div>
+        <div className="mt-6 flex justify-between">
+          <Button
+            type="submit"
+            className="px-4 py-2 mb-6 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={prevStep}
+          >
+            Back
+          </Button>
+          <Button
+            type="submit"
+            className="px-4 py-2 mb-6 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={nextStep}
+          >
+            Continue
+          </Button>
         </div>
       </div>
     </div>
