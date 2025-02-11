@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormComponent } from "./elements/FormComponent";
@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { ComboboxDemo } from "@/components/elements/ComboboxDemo";
 import { StepperSidebar } from "./elements/StepperSidebar";
 import { CountryApi } from "./elements/CountryApi";
+import { StatesApi } from "./elements/StatesApi";
+import { ComboBox } from "./elements/ComboBox";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "The customer shipping first name is required."),
@@ -20,24 +22,24 @@ const formSchema = z.object({
   alternateMobile: z.string().optional(),
   email: z.string(),
   country: z.string().optional(),
+  state:z.string().min(1, "The customer shipping state is required"),
   Country: z.string().optional(),
   address1: z.string().min(9, "The customer shipping address 1 is required."),
   landmark: z.string().optional(),
   address2: z.string().min(9, "The customer shipping address 2 is required."),
   pincode: z.string().min(1, "The customer shipping postcode is required."),
   city: z.string().min(1, "The customer shipping city is required."),
-  state: z.string().optional(),
+  // state: z.string().optional(),
   address3: z.string().min(9, "The customer billing address 1 is required."),
   address4: z.string().min(9, "The customer billing address 3 is required."),
   mark: z.string().optional(),
   pincode1: z.string().min(1, "The customer billing postcode is required."),
   city1: z.string().min(1, "The customer billing city is required."),
-  // state1: z.string().min(1, "The customer billing state is required"),
+  state1: z.string().min(1, "The customer billing state is required"),
 });
 
-export const BuyerDetails = ({ nextStep }) => {
+export const BuyerDetails = ({ nextStep, setActiveStep, activeStep, buyerDetails }) => {
   const [checked, setChecked] = useState(true);
-  const [states, setStates] = useState([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,40 +65,9 @@ export const BuyerDetails = ({ nextStep }) => {
       mark: "",
       pincode1: "",
       city1: "",
+      state1:"",
     },
   });
-
-  const countrySelected = form.getValues("country");
-
-  useEffect(() => {
-    if (countrySelected) {
-      const fetchStates = async () => {
-        try {
-          const response = await fetch(`https://api.fr.stg.shipglobal.in/api/v1/location/states`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              state_country_code: countrySelected,
-            }),
-          });
-          const result = await response.json();
-          console.log(result);
-          if (result.data && result.data.states) {
-            const formattedStates = result.data.states.map((state: any) => ({
-              value: state.state_name,
-              label: state.state_name,
-            }));
-            setStates(formattedStates);
-          }
-        } catch (error) {
-          console.error("Error fetching states:", error);
-        }
-      };
-      fetchStates();
-    }
-  }, [countrySelected]);
 
   useEffect(() => {
     const savedData = localStorage.getItem("buyerFormData");
@@ -117,6 +88,9 @@ export const BuyerDetails = ({ nextStep }) => {
       form.setValue("mark", form.getValues("landmark"));
       form.setValue("pincode1", form.getValues("pincode"));
       form.setValue("city1", form.getValues("city"));
+      form.setValue("state1", form.getValues("state"));
+
+
     } else {
       form.setValue("first", "");
       form.setValue("last", "");
@@ -125,13 +99,19 @@ export const BuyerDetails = ({ nextStep }) => {
       form.setValue("mark", "");
       form.setValue("pincode1", "");
       form.setValue("city1", "");
+      form.setValue("state1", "");
     }
   }, [checked, form]);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values, "values");
-    localStorage.setItem("buyerFormData", JSON.stringify(values));
-    nextStep();
+    const updatedBuyerDetails = {
+      ...buyerDetails,
+      ...values,
+    };
+
+    console.log(updatedBuyerDetails, "Updated Buyer Details");
+    localStorage.setItem("buyerFormData", JSON.stringify(updatedBuyerDetails));
+
+    nextStep(updatedBuyerDetails);
   }
 
   const frameworks = [
@@ -145,127 +125,94 @@ export const BuyerDetails = ({ nextStep }) => {
     },
   ];
 
-  // const states = [
-  //   { value: "AndhraPradesh", label: "Andhra Pradesh" },
-  //   { value: "ArunachalPradesh", label: "Arunachal Pradesh" },
-  //   { value: "Assam", label: "Assam" },
-  //   { value: "Bihar", label: "Bihar" },
-  //   { value: "Chhattisgarh", label: "Chhattisgarh" },
-  //   { value: "Goa", label: "Goa" },
-  //   { value: "Gujarat", label: "Gujarat" },
-  //   { value: "Haryana", label: "Haryana" },
-  //   { value: "HimachalPradesh", label: "Himachal Pradesh" },
-  //   { value: "Jharkhand", label: "Jharkhand" },
-  //   { value: "Karnataka", label: "Karnataka" },
-  //   { value: "Kerala", label: "Kerala" },
-  //   { value: "MadhyaPradesh", label: "Madhya Pradesh" },
-  //   { value: "Maharashtra", label: "Maharashtra" },
-  //   { value: "Manipur", label: "Manipur" },
-  //   { value: "Meghalaya", label: "Meghalaya" },
-  //   { value: "Mizoram", label: "Mizoram" },
-  //   { value: "Nagaland", label: "Nagaland" },
-  //   { value: "Odisha", label: "Odisha" },
-  //   { value: "Punjab", label: "Punjab" },
-  //   { value: "Rajasthan", label: "Rajasthan" },
-  // ];
-
   return (
-    <div className="flex lg:flex-row space-x-6 justify-center py-12 px-28">
-      <StepperSidebar />
-      <div className=" bg-white rounded-md w-2/3 ">
+    <div className="lg:flex lg:flex-row lg:space-x-6 lg:justify-center py-12 lg:px-12 px-6">
+      <StepperSidebar setActiveStep={setActiveStep} activeStep={activeStep} />
+      <div className=" bg-white rounded-md lg:w-2/3 pt-3">
         <div className="my-10 bg-white">
-          <p className="font-semibold text-lg my-9 ml-6">
+          <p className="font-semibold text-lg my-9 ml-6 ">
             Select Pickup Address<span className="text-red-500">*</span>
           </p>
-          <div className="ml-6 mr-16">
-            <ComboboxDemo label="Select Pickup Address" frameworks={frameworks} placeholder="Select Pickup Address" />
+          <div className="mx-4 lg:ml-6 lg:mr-16">
+            <ComboBox
+              label="Select Pickup Address"
+              frameworks={frameworks}
+              placeholder="Select Pickup Address"
+              
+            />
           </div>
         </div>
         <hr />
         <div>
-          <p className="font-semibold text-lg my-9 ml-6">Buyer Shipping Details</p>
+          <p className="font-semibold text-lg my-9 ml-4 lg:ml-6">Buyer Shipping Details</p>
           <div className="mb-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 text-black">
-                <div className="grid grid-cols-3 space-x-5 my-5 ml-7 mr-20">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="lg:space-y-8 text-black">
+                <div className="grid lg:grid-cols-3 space-y-2 lg:space-y-0 lg:space-x-5 my-5 lg:ml-7 lg:mr-20 mx-4">
                   <FormComponent name="firstName" label="First Name" control={form.control} />
                   <FormComponent name="lastName" label="Last Name" control={form.control} />
                   <FormComponent name="mobileNo" label="Mobile No." control={form.control} />
                 </div>
-                <div className="grid grid-cols-3 space-x-5 my-5 ml-7 mr-20">
-                  <div className="col-span-1">
+                <div className="grid lg:grid-cols-3 space-y-2 -mt-2 lg:space-y-0 lg:space-x-5 lg:my-5 mx-4 lg:ml-7 lg:mr-20">
+                  <div className="lg:col-span-1">
                     <FormComponent name="alternateMobile" label="Alternate Mobile No." control={form.control} />
                   </div>
 
-                  <div className="col-span-2">
-                    {" "}
+                  <div className="lg:col-span-2">
                     <FormComponent name="email" label="Email Id" control={form.control} />
                   </div>
                 </div>
-                <div className="my-5 ml-7 mr-20">
+                <div className="my-5 lg:ml-7 lg:mr-20 mx-4">
                   <CountryApi name="country" control={form.control} />
                 </div>
-                <div className="grid grid-cols-2 space-x-4  my-5 ml-7 mr-20">
+                <div className="grid lg:grid-cols-2 space-y-2 lg:space-y-0  lg:space-x-4  my-5 lg:ml-7 lg:mr-20 mx-4">
                   <FormComponent name="address1" label="Address 1" control={form.control} />
                   <FormComponent name="landmark" label="Landmark" control={form.control} />
                 </div>
-                <div className="my-5 ml-7 mr-20">
+                <div className="my-5 lg:ml-7 lg:mr-20 mx-4">
                   <FormComponent name="address2" label="Address 2" control={form.control} />
                 </div>
-                <div className="grid grid-cols-3 space-x-4  my-5 ml-7 mr-20 items-center">
+                <div className="grid lg:grid-cols-3 space-y-2 lg:space-y-0  lg:space-x-4  my-5 lg:ml-7 lg:mr-20 mx-4 items-center">
                   <FormComponent name="pincode" label="Pincode" control={form.control} />
                   <FormComponent name="city" label="City" control={form.control} />
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 ">
-                      State<span className="text-red-500">*</span>
-                    </Label>
 
-                    <ComboboxDemo
-                      label="Select State"
-                      frameworks={states}
-                      placeholder="Select State"
-                      
-                    />
-                    
+                  <div className="my-5 lg:ml-7">
+                    <StatesApi name="state" form={form} />
                   </div>
                 </div>
-                <div className="flex items-center ml-6 my-6">
+                <div className="flex items-center lg:ml-6 my-6 mx-4 cursor-pointer lg:w-1/2" onClick={() => setChecked(!checked)}>
                   <input
                     type="checkbox"
                     checked={checked}
-                    onChange={() => setChecked(!checked)}
-                    className="w-6 h-6 border border-gray-700"
+                    
+                    className="w-6 h-6 border border-gray-700 cursor-pointer"
                   />
                   <p className="ml-3 text-sm font-medium">Shipping & Billing Address are same.</p>
                 </div>
                 {!checked && (
                   <div>
-                    <div className="font-semibold text-lg my-9 ml-6">Buyer Billing Details</div>
+                    <div className="font-semibold text-lg my-9 ml-4 lg:ml-6">Buyer Billing Details</div>
 
-                    <div className="grid grid-cols-3 space-x-5 my-5 ml-7 mr-20">
+                    <div className="grid lg:grid-cols-3 space-y-2 lg:space-y-0 lg:space-x-5 my-5 lg:ml-7 lg:mr-20 mx-4">
                       <FormComponent name="first" label="First Name" control={form.control} />
                       <FormComponent name="last" label="Last Name" control={form.control} />
                       <FormComponent name="mobile" label="Mobile No." control={form.control} />
                     </div>
-                    <div className="my-5 ml-7 mr-20">
+                    <div className="my-5 lg:ml-7 lg:mr-20 mx-4">
                       <CountryApi name="Country" control={form.control} />
                     </div>
-                    <div className="grid grid-cols-2 space-x-5 my-5 ml-7 mr-20">
+                    <div className="grid lg:grid-cols-2 space-y-2 lg:space-y-0 lg:space-x-4  my-5 lg:ml-7 lg:mr-20 mx-4">
                       <FormComponent name="address3" label="Address 1" control={form.control} />
                       <FormComponent name="mark" label="Landmark" control={form.control} />
                     </div>
-                    <div className="my-5 ml-7 mr-20">
+                    <div className="my-5 lg:ml-7 lg:mr-20 mx-4">
                       <FormComponent name="address4" label="Address 2" control={form.control} />
                     </div>
-                    <div className="grid grid-cols-3 space-x-4  my-5 ml-7 mr-20 items-center">
+                    <div className="grid lg:grid-cols-3 space-y-2 lg:space-y-0 lg:space-x-4  my-5 lg:ml-7 lg:mr-20 mx-4 items-center">
                       <FormComponent name="pincode1" label="Pincode" control={form.control} />
                       <FormComponent name="city1" label="City" control={form.control} />
-                      <div className="space-y-2">
-                        <Label className="text-gray-700 ">
-                          State<span className="text-red-500">*</span>
-                        </Label>
-
-                        <ComboboxDemo label="Select State" frameworks={states} placeholder="Select State" />
+                      <div className="my-5 lg:ml-7">
+                        <StatesApi name="state1" form={form} />
                       </div>
                     </div>
                   </div>

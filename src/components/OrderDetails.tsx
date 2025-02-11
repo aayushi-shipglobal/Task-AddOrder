@@ -15,49 +15,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const formSchema = z.object({
-  actualWeight: z
-    .string()
-    .min(1, "The package weight is required.")
-    .transform((val) => parseFloat(val)) // Convert string to number
-    .refine((val) => !isNaN(val), {
-      message: "The package weight must be a numeric value.",
-    })
-    .refine((val) => val > 0, {
-      message: "The package weight must be greater than zero.",
-    }),
-
-  length: z
-    .string()
-    .min(1, "The package length is required.")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), {
-      message: "The package length must be a numeric value.",
-    })
-    .refine((val) => val > 0, {
-      message: "The package length must be greater than zero.",
-    }),
-
-  breadth: z
-    .string()
-    .min(1, "The package breadth is required.")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), {
-      message: "The package breadth must be a numeric value.",
-    })
-    .refine((val) => val > 0, {
-      message: "The package breadth must be greater than zero.",
-    }),
-
-  height: z
-    .string()
-    .min(1, "The package height is required.")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), {
-      message: "The package height must be a numeric value.",
-    })
-    .refine((val) => val > 0, {
-      message: "The package height must be greater than zero.",
-    }),
+  actualWeight: z.number().min(1, "The package weight is required."),
+  length: z.number().min(1, "The package length is required."),
+  breadth: z.number().min(1, "The package breadth is required."),
+  height: z.number().min(1, "The package height is required."),
   invoiceNo: z.string().min(2, "The invoice number is required."),
   invoiceDate: z.string(),
   invoiceCurrency: z.string(),
@@ -78,16 +39,16 @@ import { StepperSidebar } from "./elements/StepperSidebar";
 import { ComboboxDemo } from "./elements/ComboboxDemo";
 import ItemDetails from "./elements/ItemDetails";
 
-export const OrderDetails = ({ nextStep, prevStep }) => {
+export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, orderDetails }) => {
   const [date, setDate] = React.useState<Date>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      actualWeight: "",
-      length: "",
-      breadth: "",
-      height: "",
+      actualWeight: 0,
+      length: 0,
+      breadth: 0,
+      height: 0,
       invoiceNo: "",
       invoiceDate: "",
       invoiceCurrency: "",
@@ -111,16 +72,15 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       Object.keys(parsedData).forEach((key) => {
-       
-        form.setValue(key as keyof z.infer<typeof formSchema> , parsedData[key]);
+        form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
       });
     }
   }, [form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-     localStorage.setItem("orderFormData", JSON.stringify(values));
-    nextStep();
+    localStorage.setItem("orderFormData", JSON.stringify(values));
+    nextStep(values);
   }
 
   const frameworks = [
@@ -146,10 +106,10 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
     },
   ];
   return (
-    <div className="flex lg:flex-row space-x-6 justify-center py-12 px-28">
-      <StepperSidebar />
-
-      <div className="bg-white rounded-md w-2/3 px-6">
+    <div className="lg:flex lg:flex-row lg:space-x-6 lg:justify-center py-12 lg:px-12 px-6">
+      {" "}
+      <StepperSidebar setActiveStep={setActiveStep} activeStep={activeStep} />
+      <div className="bg-white rounded-md lg:w-2/3 px-6 pt-3">
         <div className="font-semibold text-lg mt-9 ml-6 mb-2">Shipment Type</div>
         <p className="text-gray-400 text-sm font-semibold ml-6 mb-4">
           Please select the shipment Mode. Note: CSB-V Shipments can only be sent through ShipGlobal Direct. If other
@@ -159,10 +119,10 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
           If you need more info, please call/whatsapp at
           <span className="text-blue-500 cursor-pointer">+91 9811098919.</span>
         </p>
-        <div className="grid grid-cols-2 space-x-4 mt-6 cursor-pointer">
+        <div className="grid lg:grid-cols-2 mx-10 gap-6 lg:space-x-4 mt-6 cursor-pointer">
           <div className="border border-dashed border-blue-300 bg-blue-100 rounded-md py-4">
             <p className="font-bold text-center mb-4">CSB IV</p>
-            <div className="flex flex-row gap-x-10 items-center ml-12">
+            <div className="flex flex-row gap-x-5 lg:gap-x-10 items-center ml-12">
               <UserRoundCheck className="fill-blue-500 text-blue-500" />
               <div className="text-sm text-gray-500 font-semibold mb-2">
                 <p>Non Commercial Mode</p>
@@ -173,7 +133,7 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
           </div>
           <div className="border border-dashed border-gray-300 bg-gray-100 rounded-md py-4">
             <p className="font-bold text-center mb-4">CSB V</p>
-            <div className="flex flex-row gap-x-10 items-center ml-11">
+            <div className="flex flex-row gap-x-5 lg:gap-x-10 items-center ml-11">
               <FilePenLine />
               <div className="text-sm text-gray-500 font-semibold mb-2">
                 <p>Non Commercial Mode</p>
@@ -191,7 +151,7 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ml-6">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ml-6">
                 <ShipmentDetailsComponent control={form.control} name="actualWeight" label="Actual Weight" unit="KG" />
                 <ShipmentDetailsComponent control={form.control} name="length" label="Length" unit="CM" />
                 <ShipmentDetailsComponent control={form.control} name="breadth" label="Breadth" unit="CM" />
@@ -200,9 +160,8 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
 
               <div>
                 <div className="font-semibold text-lg mt-9 ml-6">Order Details</div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ml-6 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ml-6 items-center">
                   <OrderFormComponent control={form.control} label="Invoice No." name="invoiceNo" />
-                  {/* <OrderFormComponent control={form.control} label="Invoice Date" name="invoiceDate" /> */}
                   <FormField
                     control={form.control}
                     name="invoiceDate"
@@ -218,7 +177,7 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-[240px] justify-start text-left font-normal",
+                                    "lg:w-[240px] w-[700px] justify-start text-left font-normal",
                                     !date && "text-muted-foreground",
                                   )}
                                 >
@@ -273,7 +232,7 @@ export const OrderDetails = ({ nextStep, prevStep }) => {
 
                   <OrderFormComponent control={form.control} label="Order Id/Ref. Id" name="orderId" />
                 </div>
-                <div className="ml-6 my-6 w-1/4 pr-4">
+                <div className="ml-6 my-6 lg:w-1/4 lg:pr-4">
                   <OrderFormComponent control={form.control} label="IOSS Number:" name="iossNumber" />
                 </div>
               </div>

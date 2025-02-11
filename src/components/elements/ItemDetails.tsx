@@ -42,7 +42,7 @@ const ItemDetails = ({ form }) => {
                       <Input
                         {...field}
                         type={itemField === "qty" || itemField === "unitPrice" ? "number" : "text"}
-                        className={`w-24`}
+                        className={`lg:w-24 `}
                       />
                     </FormControl>
                     <FormMessage />

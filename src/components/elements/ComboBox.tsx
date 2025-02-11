@@ -17,12 +17,12 @@ type ComboboxDemoProps = {
   label: string;
   frameworks: Framework[];
   placeholder: string;
-  value?: string;
-  onChange?: any;
+
 };
 
-export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }: ComboboxDemoProps) {
+export function ComboBox({ label, frameworks, placeholder }: ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false);
+  const [value,setValue]= React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,7 +33,7 @@ export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }
           aria-expanded={open}
           className="justify-between bg-slate-100 text-gray-600 w-full"
         >
-          {frameworks.find((framework) => framework.value === value)?.label || label}
+          {value ? frameworks.find((framework) => framework.value === value)?.label : label}
 
           <ChevronDown className="mr-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -49,7 +49,7 @@ export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue);
+                    setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
