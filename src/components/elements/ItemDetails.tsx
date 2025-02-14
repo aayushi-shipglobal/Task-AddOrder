@@ -4,22 +4,43 @@ import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/f
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
 import { Input } from "../ui/input";
+import { useState, useEffect } from "react";
 
-const ItemDetails = ({ form }) => {
-  const itemFields = ["productName", "sku", "hsn", "qty", "unitPrice"];
-  type ItemFields = "productName" | "sku" | "hsn" | "qty" | "unitPrice";
-
+const ItemDetails = ({ form }: { form: any }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
+
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  // Function to recalculate the total price
+  const calculateTotalPrice = () => {
+    const newTotalPrice = fields.reduce((acc: number, field: any) => {
+      const unitPrice = parseFloat(field.unitPrice);
+      const qty = parseFloat(field.qty);
+      return acc + unitPrice * qty;
+    }, 0);
+    setTotalPrice(newTotalPrice);
+  };
+
+  useEffect(() => {
+    // Recalculate total price when fields change
+    calculateTotalPrice();
+  }, [fields]);
+
+  const handleFieldChange = (index: number, field: string, value: any) => {
+    // Update field value when changed
+    form.setValue(`items.${index}.${field}`, value);
+    calculateTotalPrice(); // Recalculate total price on field change
+  };
 
   return (
     <div>
       {fields.map((field, index) => (
         <div key={field.id} className="lg:flex items-center gap-x-2 ml-3">
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-1 mt-5 items-center">
-            {(itemFields as ItemFields[]).map((itemField) => (
+            {["productName", "sku", "hsn", "qty", "unitPrice"].map((itemField) => (
               <Controller
                 key={itemField}
                 control={form.control}
@@ -27,25 +48,22 @@ const ItemDetails = ({ form }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {itemField === "productName"
-                        ? "Product Name"
-                        : itemField === "sku"
-                        ? "SKU"
-                        : itemField === "hsn"
-                        ? "HSN"
-                        : itemField === "qty"
-                        ? "Qty"
-                        : "Unit Price (INR)"}
+                      {itemField === "productName" && "Product Name"}
+                      {itemField === "sku" && "SKU"}
+                      {itemField === "hsn" && "HSN"}
+                      {itemField === "qty" && "Qty"}
+                      {itemField === "unitPrice" && "Unit Price (INR)"}
                       {itemField !== "sku" && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type={itemField === "qty" || itemField === "unitPrice" ? "number" : "text"}
-                        className={`lg:w-24 `}
+                        className="lg:w-24"
+                        onChange={(e) => handleFieldChange(index, itemField, e.target.value)} 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage>{form.formState.errors.items?.[index]?.[itemField]?.message}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -59,7 +77,7 @@ const ItemDetails = ({ form }) => {
                   <FormLabel>
                     IGST <span className="text-red-500">*</span>
                   </FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={(value) => handleFieldChange(index, "igst", value)} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select IGST" />
@@ -73,7 +91,7 @@ const ItemDetails = ({ form }) => {
                       <SelectItem value="28">28%</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage>{form.formState.errors.items?.[index]?.igst?.message}</FormMessage>
                 </FormItem>
               )}
             />
@@ -86,24 +104,26 @@ const ItemDetails = ({ form }) => {
           )}
         </div>
       ))}
-
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() =>
-          append({
-            product_name: "",
-            sku: "",
-            hsn: "",
-            qty: "",
-            unit_price: "",
-            igst: "0",
-          })
-        }
-        className="flex items-center gap-2 mt-5"
-      >
-        <Plus className="w-4 h-4" /> Add Item
-      </Button>
+      <div className="flex justify-between">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() =>
+            append({
+              productName: "",
+              sku: "",
+              hsn: "",
+              qty: 0,
+              unitPrice: 0,
+              igst: "0", 
+            })
+          }
+          className="flex items-center gap-2 mt-5"
+        >
+          <Plus className="w-4 h-4" /> Add Item
+        </Button>
+        <div className="mt-4 font-bold text-xl mr-4">Total Price: {totalPrice.toFixed(2)}</div>
+      </div>
     </div>
   );
 };

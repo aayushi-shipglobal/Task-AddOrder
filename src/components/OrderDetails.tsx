@@ -6,6 +6,8 @@ import { ShipmentDetailsComponent } from "./elements/ShipmentDetailsComponent";
 import { OrderFormComponent } from "./elements/OrderFormComponent";
 import * as React from "react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateOrderDetails } from "./orderSlice";
 import { format } from "date-fns";
 import { CalendarIcon, FilePenLine, UserRoundCheck } from "lucide-react";
 // import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -29,8 +31,8 @@ const formSchema = z.object({
       productName: z.string().min(2, "Product Title is required."),
       sku: z.string().optional(),
       hsn: z.string().min(2, "HSN is required."),
-      qty: z.string().min(2, "Product Qty is required."),
-      unitPrice: z.string().min(2, "Product Price is required."),
+      qty: z.number().min(2, "Product Qty is required."),
+      unitPrice: z.number().min(2, "Product Price is required."),
       igst: z.string(),
     }),
   ),
@@ -41,41 +43,56 @@ import ItemDetails from "./elements/ItemDetails";
 
 export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, orderDetails }) => {
   const [date, setDate] = React.useState<Date>();
+  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      actualWeight: 0,
-      length: 0,
-      breadth: 0,
-      height: 0,
-      invoiceNo: "",
-      invoiceDate: "",
-      invoiceCurrency: "",
-      orderId: "",
-      iossNumber: "",
-      items: [
-        {
-          productName: "",
-          sku: "",
-          hsn: "",
-          qty: "",
-          unitPrice: "",
-          igst: "",
-        },
-      ],
-    },
+    defaultValues: orderDetails
+    // {
+    //   actualWeight: 0,
+    //   length: 0,
+    //   breadth: 0,
+    //   height: 0,
+    //   invoiceNo: "",
+    //   invoiceDate: "",
+    //   invoiceCurrency: "",
+    //   orderId: "",
+    //   iossNumber: "",
+    //   items: [
+    //     {
+    //       productName: "",
+    //       sku: "",
+    //       hsn: "",
+    //       qty: 0,
+    //       unitPrice: 0,
+    //       igst: "0",
+    //     },
+    //   ],
+    // },
   });
 
   useEffect(() => {
     const savedData = localStorage.getItem("orderFormData");
     if (savedData) {
       const parsedData = JSON.parse(savedData);
+  
+      parsedData.actualWeight = Number(parsedData.actualWeight);
+      parsedData.length = Number(parsedData.length);
+      parsedData.breadth = Number(parsedData.breadth);
+      parsedData.height = Number(parsedData.height);
+  
+      parsedData.items = parsedData.items.map((item:any) => ({
+        ...item,
+        qty: Number(item.qty),
+        unitPrice: Number(item.unitPrice),
+       
+      }));
+  
       Object.keys(parsedData).forEach((key) => {
         form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
       });
     }
-  }, [form]);
+  }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);

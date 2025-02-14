@@ -17,12 +17,23 @@ type ComboboxDemoProps = {
   label: string;
   frameworks: Framework[];
   placeholder: string;
-
+  value: string;
+  onChange: (value: string) => void;
 };
 
-export function ComboBox({ label, frameworks, placeholder }: ComboboxDemoProps) {
+export function ComboBox({
+  label,
+  frameworks,
+  placeholder,
+  value,
+  onChange,
+}: ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false);
-  const [value,setValue]= React.useState("");
+
+  const handleSelect = (currentValue: string) => {
+    onChange(currentValue === value ? "" : currentValue); 
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -31,6 +42,8 @@ export function ComboBox({ label, frameworks, placeholder }: ComboboxDemoProps) 
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-controls="combobox-list"
+          aria-activedescendant={value ? `combobox-item-${value}` : undefined}
           className="justify-between bg-slate-100 text-gray-600 w-full"
         >
           {value ? frameworks.find((framework) => framework.value === value)?.label : label}
@@ -41,19 +54,19 @@ export function ComboBox({ label, frameworks, placeholder }: ComboboxDemoProps) 
       <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
         <Command>
           <CommandInput placeholder={placeholder} />
-          <CommandList>
+          <CommandList id="combobox-list">
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
                   key={framework.value}
+                  id={`combobox-item-${framework.value}`}
                   value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
+                  onSelect={() => handleSelect(framework.value)}
                 >
-                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
+                  <Check
+                    className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")}
+                  />
                   {framework.label}
                 </CommandItem>
               ))}

@@ -6,9 +6,10 @@ type ShipmentDetailsComponentProps = {
   name: string;
   label: string;
   unit: string;
+  type?: string;
 };
 
-export const ShipmentDetailsComponent = ({ control, name, label, unit }: ShipmentDetailsComponentProps) => {
+export const ShipmentDetailsComponent = ({ control, name, label, unit, type }: ShipmentDetailsComponentProps) => {
   return (
     <div>
       <FormField
@@ -22,12 +23,12 @@ export const ShipmentDetailsComponent = ({ control, name, label, unit }: Shipmen
             </FormLabel>
             <FormControl>
               <div className="flex flex-row border border-gray-300 rounded">
-                <Input {...field} className="border-none shadow-none h-10 focus-visible:ring-0"/>
+                <Input {...field} className="border-none shadow-none h-10 focus-visible:ring-0" type={type} />
                 <span className=" px-3 py-2 border-l border-gray-300  bg-gray-200">{unit}</span>
               </div>
             </FormControl>
 
-            <FormMessage className="font-normal text-xs"/>
+            <FormMessage className="font-normal text-xs" />
           </FormItem>
         )}
       />

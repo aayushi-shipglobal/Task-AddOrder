@@ -14,7 +14,6 @@ export const StatesApi = ({ form, name }: Props) => {
 
   useEffect(() => {
     if (!countrySelected) {
-      form.setValue(name, "");
       setStates([]);
       return;
     }
@@ -39,6 +38,11 @@ export const StatesApi = ({ form, name }: Props) => {
             label: state.state_name,
           }));
           setStates(formattedStates);
+
+          const currentState = form.getValues(name);
+          if (!formattedStates.some((state) => state.value === currentState)) {
+            form.setValue(name, "");
+          }
         }
       } catch (error) {
         console.error("Error fetching states:", error);
@@ -47,6 +51,7 @@ export const StatesApi = ({ form, name }: Props) => {
 
     fetchStates();
   }, [countrySelected, form, name]);
+
   return (
     <FormField
       control={form.control}
@@ -57,7 +62,6 @@ export const StatesApi = ({ form, name }: Props) => {
             State <span className="text-red-500">*</span>
           </FormLabel>
           <FormControl>
-          
             <ComboboxDemo
               {...field}
               frameworks={states}
@@ -65,8 +69,6 @@ export const StatesApi = ({ form, name }: Props) => {
               placeholder="Select state"
               value={field.value}
               onChange={field.onChange}
-              
-              
             />
           </FormControl>
           <FormMessage className="font-normal text-xs" />

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -18,11 +17,31 @@ type ComboboxDemoProps = {
   frameworks: Framework[];
   placeholder: string;
   value?: string;
-  onChange?: any;
+  onChange?: (value: string) => void;
 };
 
-export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }: ComboboxDemoProps) {
+export function ComboboxDemo({
+  label,
+  frameworks,
+  placeholder,
+  value,
+  onChange,
+}: ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+
+  const filteredFrameworks = frameworks.filter((framework) =>
+    framework.label.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const selectedOption = frameworks.find((framework) => framework.value === value);
+
+  const handleSelect = (selectedValue: string) => {
+    if (onChange) {
+      onChange(selectedValue === value ? "" : selectedValue);
+    }
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,31 +52,39 @@ export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }
           aria-expanded={open}
           className="justify-between bg-slate-100 text-gray-600 w-full"
         >
-          {frameworks.find((framework) => framework.value === value)?.label || label}
-
+          {selectedOption ? selectedOption.label : label}
           <ChevronDown className="mr-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
         <Command>
-          <CommandInput placeholder={placeholder} />
+          <CommandInput
+            placeholder={placeholder}
+            value={query}
+            onValueChange={setQuery}
+          />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
-                  {framework.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {filteredFrameworks.length === 0 ? (
+              <CommandEmpty>No results found.</CommandEmpty>
+            ) : (
+              <CommandGroup>
+                {filteredFrameworks.map((framework) => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.label}
+                    onSelect={() => handleSelect(framework.value)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === framework.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {framework.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

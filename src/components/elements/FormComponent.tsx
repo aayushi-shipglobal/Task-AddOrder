@@ -5,10 +5,9 @@ type FormComponentProps = {
   control: any;
   label: string;
   name: string;
-  
 };
 
-export const FormComponent = ({ control, label, name, }: FormComponentProps) => {
+export const FormComponent = ({ control, label, name }: FormComponentProps) => {
   return (
     <div>
       <FormField
@@ -16,11 +15,14 @@ export const FormComponent = ({ control, label, name, }: FormComponentProps) => 
         name={name}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-700">{label} <span className="text-red-500">*</span></FormLabel>
+            <FormLabel className="text-gray-700">
+              {label}
+              {name !== "landmark" && name !== "mark" && <span className="text-red-500">*</span>}
+            </FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
-            <FormMessage className="font-normal text-xs"/>
+            <FormMessage className="font-normal text-xs" />
           </FormItem>
         )}
       />
