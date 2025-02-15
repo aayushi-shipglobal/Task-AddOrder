@@ -1,12 +1,15 @@
 import { Check } from "lucide-react";
-type stepperProps = {
-  setActiveStep: any;
-  activeStep: number;
-};
+import { useDispatch, useSelector } from "react-redux";
+import { updateStep } from "../../reducer/orderSlice"; 
+import { RootState } from "../../store"; 
 
-export const StepperSidebar = ({ activeStep, setActiveStep }: stepperProps) => {
+
+export const StepperSidebar = () => {
+  const dispatch = useDispatch();
+  const activeStep = useSelector((state: RootState) => state.order.step); 
+
   const handleStep = (step: number) => {
-    setActiveStep(step);
+    dispatch(updateStep(step)); 
   };
   return (
     <div className=" bg-white rounded-md lg:w-1/4  gap-x-2 flex lg:flex-col  items-center justify-center lg:pl-6 mb-4 px-6 lg:px-0">

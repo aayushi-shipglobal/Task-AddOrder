@@ -1,58 +1,94 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-interface Item {
-  productName: string;
-  sku?: string;
-  hsn: string;
-  qty: string;
-  unitPrice: string;
-  igst: string;
-}
-
-interface OrderDetails {
-  actualWeight: string;
-  length: string;
-  breadth: string;
-  height: string;
-  invoiceNo: string;
-//   invoiceDate: string;
-  invoiceCurrency: string;
-  orderId: string;
-  iossNumber: string;
-  items: Item[];
-}
-
-interface OrderState {
-  orderDetails: OrderDetails;
-}
-
-const initialState: OrderState = {
+const initialState = {
+  buyerDetails: {
+    pickupAddress:"",
+      firstName: "",
+      lastName: "",
+      mobileNo: "",
+      mobile: "",
+      alternateMobile: "",
+      email: "",
+      country: "",
+      state: "",
+      Country: "",
+      address1: "",
+      landmark: "",
+      address2: "",
+      pincode: "",
+      city: "",
+      first: "",
+      last: "",
+      address3: "",
+      address4: "",
+      mark: "",
+      pincode1: "",
+      city1: "",
+      state1:"",
+  },
+    
   orderDetails: {
     actualWeight: "",
     length: "",
     breadth: "",
     height: "",
     invoiceNo: "",
-    // invoiceDate: "",
+    invoiceDate: "",
     invoiceCurrency: "",
     orderId: "",
     iossNumber: "",
-    items: [],
+    items: [
+      {
+        productName: "",
+        sku: "",
+        hsn: "",
+        qty: 0,
+        unitPrice: 0,
+        igst: "0",
+      },
+    ],
   },
+
+  step: 1,
+  shippingPartner: "Shipglobal WorldWide",
+  
 };
 
 const orderSlice = createSlice({
-  name: "orderDetails",
+  name: "order",
   initialState,
   reducers: {
-    setOrderDetails: (state, action: PayloadAction<OrderDetails>) => {
+    updateBuyerDetails: (state, action) => {
+      state.buyerDetails = action.payload;
+    },
+
+    
+
+   
+    updateOrderDetails: (state, action) => {
       state.orderDetails = action.payload;
     },
-    resetOrderDetails: (state) => {
-      state.orderDetails = initialState.orderDetails;
+  
+    updateStep: (state, action) => {
+      state.step = action.payload;
     },
+
+    updateShippingPartner: (state, action) => {
+      state.shippingPartner = action.payload;
+    },
+
+   
+    
   },
 });
 
-export const { setOrderDetails, resetOrderDetails } = orderSlice.actions;
+export const {
+  updateBuyerDetails,
+  toggleIsBillingSame,
+  updateOrderDetails,
+  updateOrderItem,
+  updateStep,
+  updateShippingPartner,
+} = orderSlice.actions;
+
 export default orderSlice.reducer;

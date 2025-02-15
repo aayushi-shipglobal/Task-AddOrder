@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { FormComponent } from "./elements/FormComponent";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBuyerDetails } from "../reducer/orderSlice";
+import { RootState } from "../store";
 import { StepperSidebar } from "./elements/StepperSidebar";
 import { CountryApi } from "./elements/CountryApi";
 import { StatesApi } from "./elements/StatesApi";
@@ -13,7 +16,7 @@ import { ComboBox } from "./elements/ComboBox";
 import { Check } from "lucide-react";
 
 const formSchema = z.object({
-  pickupAddress:z.string().min(1, "Pickup Address is required."),
+  pickupAddress: z.string().min(1, "Pickup Address is required."),
   firstName: z.string().min(1, "The customer shipping first name is required."),
   first: z.string().min(1, "The customer billing first name is required."),
   lastName: z.string().min(1, "The customer shipping last name is required."),
@@ -23,7 +26,7 @@ const formSchema = z.object({
   alternateMobile: z.string().optional(),
   email: z.string(),
   country: z.string().optional(),
-  state:z.string().min(1, "The customer shipping state is required"),
+  state: z.string().min(1, "The customer shipping state is required"),
   Country: z.string().optional(),
   address1: z.string().min(9, "The customer shipping address 1 is required."),
   landmark: z.string().optional(),
@@ -39,53 +42,56 @@ const formSchema = z.object({
   state1: z.string().min(1, "The customer billing state is required"),
 });
 
-type buyerDetailsProps={
-  nextStep:any;
-  setActiveStep:any;
-  activeStep:any;
-  buyerDetails:any;
-}
-export const BuyerDetails = ({ nextStep, setActiveStep, activeStep, buyerDetails }:buyerDetailsProps) => {
+type buyerDetailsProps = {
+  nextStep: any;
+  setActiveStep: any;
+  activeStep: any;
+  buyerDetails: any;
+};
+export const BuyerDetails = ({ nextStep }: buyerDetailsProps) => {
   const [checked, setChecked] = useState(true);
+  const dispatch = useDispatch();
+  const currentBuyerDetails = useSelector((state: RootState) => state.order.buyerDetails);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      pickupAddress:"",
-      firstName: "",
-      lastName: "",
-      mobileNo: "",
-      mobile: "",
-      alternateMobile: "",
-      email: "",
-      country: "",
-      state: "",
-      Country: "",
-      address1: "",
-      landmark: "",
-      address2: "",
-      pincode: "",
-      city: "",
-      first: "",
-      last: "",
-      address3: "",
-      address4: "",
-      mark: "",
-      pincode1: "",
-      city1: "",
-      state1:"",
-    },
+    defaultValues: currentBuyerDetails,
+    // {
+    //   pickupAddress:"",
+    //   firstName: "",
+    //   lastName: "",
+    //   mobileNo: "",
+    //   mobile: "",
+    //   alternateMobile: "",
+    //   email: "",
+    //   country: "",
+    //   state: "",
+    //   Country: "",
+    //   address1: "",
+    //   landmark: "",
+    //   address2: "",
+    //   pincode: "",
+    //   city: "",
+    //   first: "",
+    //   last: "",
+    //   address3: "",
+    //   address4: "",
+    //   mark: "",
+    //   pincode1: "",
+    //   city1: "",
+    //   state1:"",
+    // },
   });
 
-  useEffect(() => {
-    const savedData = localStorage.getItem("buyerFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      Object.keys(parsedData).forEach((key) => {
-        form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
-      });
-    }
-  }, [form]);
+  // useEffect(() => {
+  //   const savedData = localStorage.getItem("buyerFormData");
+  //   if (savedData) {
+  //     const parsedData = JSON.parse(savedData);
+  //     Object.keys(parsedData).forEach((key) => {
+  //       form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
+  //     });
+  //   }
+  // }, [form]);
 
   useEffect(() => {
     if (checked) {
@@ -97,8 +103,6 @@ export const BuyerDetails = ({ nextStep, setActiveStep, activeStep, buyerDetails
       form.setValue("pincode1", form.getValues("pincode"));
       form.setValue("city1", form.getValues("city"));
       form.setValue("state1", form.getValues("state"));
-
-
     } else {
       form.setValue("first", "");
       form.setValue("last", "");
@@ -111,15 +115,8 @@ export const BuyerDetails = ({ nextStep, setActiveStep, activeStep, buyerDetails
     }
   }, [checked, form]);
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const updatedBuyerDetails = {
-      ...buyerDetails,
-      ...values,
-    };
-
-    console.log(updatedBuyerDetails, "Updated Buyer Details");
-    localStorage.setItem("buyerFormData", JSON.stringify(updatedBuyerDetails));
-
-    nextStep(updatedBuyerDetails);
+    dispatch(updateBuyerDetails(values));
+    nextStep(values);
   }
 
   const frameworks = [
@@ -135,7 +132,7 @@ export const BuyerDetails = ({ nextStep, setActiveStep, activeStep, buyerDetails
 
   return (
     <div className="lg:flex lg:flex-row lg:space-x-6 lg:justify-center py-12 lg:px-12 px-6">
-      <StepperSidebar setActiveStep={setActiveStep} activeStep={activeStep} />
+      <StepperSidebar />
       <div className=" bg-white rounded-md lg:w-2/3 pt-3">
         <div className="mb-6">
           <Form {...form}>

@@ -1,77 +1,57 @@
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { updateStep } from "../../reducer/orderSlice"; 
+import { RootState } from "../../store"; 
 import { BuyerDetails } from "../BuyerDetails";
 import { OrderDetails } from "../OrderDetails";
 import { ShippingPartner } from "../ShippingPartner";
 import { PlaceOrder } from "../PlaceOrder";
 
 export const Stepper = () => {
-  const [activeStep, setActiveStep] = useState(() => {
-    const savedActiveStep = localStorage.getItem("activeStep");
-    return savedActiveStep ? Number(savedActiveStep) : 1; 
-  });
+  const dispatch = useDispatch();
+  const currentStep = useSelector((state: RootState) => state.order.step);
 
-  const [buyerDetails, setBuyerDetails] = useState(() => {
-    const savedBuyerDetails = localStorage.getItem("buyerDetails");
-    return savedBuyerDetails ? JSON.parse(savedBuyerDetails) : {}; 
-  });
-
-  const [orderDetails, setOrderDetails] = useState(() => {
-    const savedOrderDetails = localStorage.getItem("orderDetails");
-    return savedOrderDetails ? JSON.parse(savedOrderDetails) : {}; 
-  });
-
-  useEffect(() => {
-    localStorage.setItem("activeStep", String(activeStep));
-   
-  }, [activeStep]);
-
-  const nextStep = (data: {}) => {
-    setBuyerDetails((prevDetails:any) => ({
-      ...prevDetails,
-      ...data,
-    }));
-
-    setOrderDetails(data);
-    setActiveStep(activeStep + 1);
+  const nextStep = () => {
+    if (currentStep < 4) {
+      dispatch(updateStep(currentStep + 1)); 
+    }
   };
 
   const prevStep = () => {
-    setActiveStep(activeStep - 1);
+    if (currentStep > 1) {
+      dispatch(updateStep(currentStep - 1)); 
+    }
   };
+
+  useEffect(() => {
+    dispatch(updateStep(currentStep));
+  }, [currentStep, dispatch]);
 
   return (
     <div>
-      {activeStep === 1 && (
+      {currentStep === 1 && (
         <BuyerDetails
           nextStep={nextStep}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          buyerDetails={buyerDetails}
+          
         />
       )}
-      {activeStep === 2 && (
+      {currentStep === 2 && (
         <OrderDetails
           nextStep={nextStep}
           prevStep={prevStep}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          orderDetails={orderDetails}
+         
         />
       )}
-      {activeStep === 3 && (
+      {currentStep === 3 && (
         <ShippingPartner
           nextStep={nextStep}
           prevStep={prevStep}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
         />
       )}
-      {activeStep === 4 && (
+      {currentStep === 4 && (
         <PlaceOrder
           prevStep={prevStep}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          buyerDetails={buyerDetails}
+          
         />
       )}
     </div>

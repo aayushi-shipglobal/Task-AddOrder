@@ -5,9 +5,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ShipmentDetailsComponent } from "./elements/ShipmentDetailsComponent";
 import { OrderFormComponent } from "./elements/OrderFormComponent";
 import * as React from "react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateOrderDetails } from "./orderSlice";
+import { updateOrderDetails } from "../reducer/orderSlice";
 import { format } from "date-fns";
 import { CalendarIcon, FilePenLine, UserRoundCheck } from "lucide-react";
 // import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -17,10 +17,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const formSchema = z.object({
-  actualWeight: z.number().min(1, "The package weight is required."),
-  length: z.number().min(1, "The package length is required."),
-  breadth: z.number().min(1, "The package breadth is required."),
-  height: z.number().min(1, "The package height is required."),
+  actualWeight: z.string().min(1, "The package weight is required."),
+  length: z.string().min(1, "The package length is required."),
+  breadth: z.string().min(1, "The package breadth is required."),
+  height: z.string().min(1, "The package height is required."),
   invoiceNo: z.string().min(2, "The invoice number is required."),
   invoiceDate: z.string(),
   invoiceCurrency: z.string(),
@@ -40,14 +40,16 @@ const formSchema = z.object({
 import { StepperSidebar } from "./elements/StepperSidebar";
 import { ComboboxDemo } from "./elements/ComboboxDemo";
 import ItemDetails from "./elements/ItemDetails";
+import { RootState } from "@/store";
 
-export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, orderDetails }) => {
+export const OrderDetails = ({ nextStep, prevStep  }) => {
   const [date, setDate] = React.useState<Date>();
   const dispatch = useDispatch();
+  const currentorderDetails = useSelector((state: RootState) => state.order.orderDetails);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: orderDetails
+    defaultValues: currentorderDetails
     // {
     //   actualWeight: 0,
     //   length: 0,
@@ -71,32 +73,31 @@ export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, or
     // },
   });
 
-  useEffect(() => {
-    const savedData = localStorage.getItem("orderFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
+  // useEffect(() => {
+  //   const savedData = localStorage.getItem("orderFormData");
+  //   if (savedData) {
+  //     const parsedData = JSON.parse(savedData);
   
-      parsedData.actualWeight = Number(parsedData.actualWeight);
-      parsedData.length = Number(parsedData.length);
-      parsedData.breadth = Number(parsedData.breadth);
-      parsedData.height = Number(parsedData.height);
+  //     parsedData.actualWeight = Number(parsedData.actualWeight);
+  //     parsedData.length = Number(parsedData.length);
+  //     parsedData.breadth = Number(parsedData.breadth);
+  //     parsedData.height = Number(parsedData.height);
   
-      parsedData.items = parsedData.items.map((item:any) => ({
-        ...item,
-        qty: Number(item.qty),
-        unitPrice: Number(item.unitPrice),
+  //     parsedData.items = parsedData.items.map((item:any) => ({
+  //       ...item,
+  //       qty: Number(item.qty),
+  //       unitPrice: Number(item.unitPrice),
        
-      }));
+  //     }));
   
-      Object.keys(parsedData).forEach((key) => {
-        form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
-      });
-    }
-  }, []);
+  //     Object.keys(parsedData).forEach((key) => {
+  //       form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
+  //     });
+  //   }
+  // }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    localStorage.setItem("orderFormData", JSON.stringify(values));
+    dispatch(updateOrderDetails(values)); 
     nextStep(values);
   }
 
@@ -125,7 +126,7 @@ export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, or
   return (
     <div className="lg:flex lg:flex-row lg:space-x-6 lg:justify-center py-12 lg:px-12 px-6">
       {" "}
-      <StepperSidebar setActiveStep={setActiveStep} activeStep={activeStep} />
+      <StepperSidebar/>
       <div className="bg-white rounded-md lg:w-2/3 px-6 pt-3">
         <div className="font-semibold text-lg mt-9 ml-6 mb-2">Shipment Type</div>
         <p className="text-gray-400 text-sm font-semibold ml-6 mb-4">
@@ -237,8 +238,7 @@ export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, or
                                 label="INR"
                                 frameworks={frameworks}
                                 value={field.value}
-                                onChange={(value) => field.onChange(value)}
-                              />
+                                onChange={(value) => field.onChange(value)} placeholder={""}                              />
                             </div>
                           </FormControl>
                           <FormMessage className="font-normal text-xs" />
