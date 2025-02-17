@@ -1,32 +1,39 @@
-import { useFieldArray, Controller } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Trash2, Plus } from "lucide-react";
-import { Input } from "../ui/input";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useFieldArray } from "react-hook-form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Trash2 } from "lucide-react";
 
-const ItemDetails = ({ form }) => {
+const ItemDetails = ({ form ,errorMessage}) => {
   const itemFields = ["productName", "sku", "hsn", "qty", "unitPrice"];
   type ItemFields = "productName" | "sku" | "hsn" | "qty" | "unitPrice";
-
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
 
+  const items = form.watch("items") || [];
+  const currency = form.watch("invoiceCurrency");
+
+  const totalPrice = items.reduce((total: number, item: { qty: number; unitPrice: number }) => {
+    const qty = item.qty || 0;
+    const unitPrice = item.unitPrice || 0;
+    return total + qty * unitPrice;
+  }, 0);
+
   return (
     <div>
       {fields.map((field, index) => (
-        <div key={field.id} className="lg:flex items-center gap-x-2 ml-3">
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-1 mt-5 items-center">
+        <div key={field.id} className="lg:flex items-center gap-x-1">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mt-2">
             {(itemFields as ItemFields[]).map((itemField) => (
-              <Controller
+              <FormField
                 key={itemField}
                 control={form.control}
-                name={`items.${index}.${itemField}`}
+                name={`items.${index}.${itemField}` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-sm font-normal">
                       {itemField === "productName"
                         ? "Product Name"
                         : itemField === "sku"
@@ -35,14 +42,24 @@ const ItemDetails = ({ form }) => {
                         ? "HSN"
                         : itemField === "qty"
                         ? "Qty"
-                        : "Unit Price (INR)"}
-                      {itemField !== "sku" && <span className="text-red-500">*</span>}
+                        : `Unit Price (${currency})`}
+                      {itemField !== "sku" && <span className="text-red-500 ml-1">*</span>}
                     </FormLabel>
                     <FormControl>
                       <Input
+                        placeholder={
+                          itemField === "productName"
+                            ? "Enter Product Name..."
+                            : itemField === "sku"
+                            ? "Enter SKU..."
+                            : itemField === "hsn"
+                            ? "Enter HSN..."
+                            : itemField === "qty"
+                            ? "Enter Qty..."
+                            : "Enter Unit Price..."
+                        }
                         {...field}
                         type={itemField === "qty" || itemField === "unitPrice" ? "number" : "text"}
-                        className={`lg:w-24 `}
                       />
                     </FormControl>
                     <FormMessage />
@@ -50,13 +67,12 @@ const ItemDetails = ({ form }) => {
                 )}
               />
             ))}
-
-            <Controller
+            <FormField
               control={form.control}
-              name={`items.${index}.igst`}
+              name={`items.${index}.igst` as const}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-sm font-normal">
                     IGST <span className="text-red-500">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -78,32 +94,33 @@ const ItemDetails = ({ form }) => {
               )}
             />
           </div>
-
-          {fields.length > 1 && (
-            <div onClick={() => remove(index)} className="mt-7 cursor-pointer">
-              <Trash2 className="w-5 h-5 text-red-500" />
-            </div>
-          )}
+          {index > 0 && <Trash2 className="w-7 h-7 cursor-pointer text-red-500 mt-8" onClick={() => remove(index)} />}
         </div>
       ))}
+      {errorMessage && <div className="mt-4 font-semibold text-red-500 text-sm">{errorMessage}</div>}
 
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() =>
-          append({
-            product_name: "",
-            sku: "",
-            hsn: "",
-            qty: "",
-            unit_price: "",
-            igst: "0",
-          })
-        }
-        className="flex items-center gap-2 mt-5"
-      >
-        <Plus className="w-4 h-4" /> Add Item
-      </Button>
+      <div className="flex flex-col md:flex-row md:justify-between mt-7">
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              product_name: "",
+              sku: "",
+              hsn: "",
+              qty: "",
+              unit_price: "",
+              igst: "0",
+            })
+          }
+          className="flex text-sm max-w-max items-center gap-2"
+        >
+          <Plus className="w-4 h-4 text-blue-800" />{" "}
+          <span className="text-blue-800 underline font-medium">Add Another Product</span>
+        </button>
+        <p className="text-base font-semibold mt-2">
+          Total Price : {currency} {totalPrice.toFixed(2)}
+        </p>
+      </div>
     </div>
   );
 };

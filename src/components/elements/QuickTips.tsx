@@ -1,0 +1,32 @@
+import Box from "/box.jpg";
+
+export const QuickTips = () => {
+  return (
+    <div>
+      <p className="font-semibold text-base text-center">Quick Tips</p>
+      <img src={Box} className="h-44 w-44 mx-auto" />
+      <p className="font-bold text-sm mt-3">Dead Weight:</p>
+      <div className="text-sm mt-3">
+        <p>
+          Dead/Dry weight or volumetric weight, whichever is higher, will be taken while calculating the freight rates.
+        </p>
+        <p className="mt-3">
+          Fixed COD charge or COD % of the order value, whichever is higher, will be taken while calculating the COD
+          fee.
+        </p>
+        <p className="mt-3">Above prices are exclusive of GST.</p>
+        <p className="mt-3">
+          The above pricing is subject to change based on fuel surcharges and courier company base rates.
+        </p>
+      </div>
+      <p className="font-bold text-sm mt-6">Volumetric Weight: (L X W X H / 5000)</p>
+      <p className="mt-3 text-sm">
+        Volumetric Weight (or DIM weight) is calculated based on the dimensions of the package.
+      </p>
+      <p className="mt-3 text-sm">
+        The formula for calculating volumetric weight involves multiplying the length, width, and height of the package
+        and then dividing by 5000.
+      </p>
+    </div>
+  );
+};

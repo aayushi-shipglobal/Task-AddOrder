@@ -5,9 +5,10 @@ type OrderFormComponentProps={
     name:string;
     label:string;
     control:any;
+    placeholder?:string
 }
 
-export const OrderFormComponent = ({name,control,label}:OrderFormComponentProps) => {
+export const OrderFormComponent = ({name,control,label,placeholder}:OrderFormComponentProps) => {
   return (
     <div>
          <FormField
@@ -20,7 +21,7 @@ export const OrderFormComponent = ({name,control,label}:OrderFormComponentProps)
                 </FormLabel>
                 <FormControl>
                   <div className="flex flex-row border border-gray-300 rounded">
-                    <Input className="border-none" {...field} />
+                    <Input className="border-none" {...field} placeholder={placeholder}/>
                   </div>
                 </FormControl>
                 <FormMessage className="font-normal text-xs" />

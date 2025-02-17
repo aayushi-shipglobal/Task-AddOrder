@@ -5,21 +5,39 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ShipmentDetailsComponent } from "./elements/ShipmentDetailsComponent";
 import { OrderFormComponent } from "./elements/OrderFormComponent";
 import * as React from "react";
-import { useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, FilePenLine, UserRoundCheck } from "lucide-react";
-// import '@fortawesome/fontawesome-free/css/all.min.css';
+import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { updateOrderData } from "./redux/addOrderSlice";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ItemDetails from "./elements/ItemDetails";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { ComboboxDemo } from "./elements/ComboboxDemo";
 
 const formSchema = z.object({
-  actualWeight: z.number().min(1, "The package weight is required."),
-  length: z.number().min(1, "The package length is required."),
-  breadth: z.number().min(1, "The package breadth is required."),
-  height: z.number().min(1, "The package height is required."),
-  invoiceNo: z.string().min(2, "The invoice number is required."),
+  actualWeight: z
+    .string()
+    .min(1, "The package weight is required.")
+    .transform((val) => Number(val)),
+  length: z
+    .string()
+    .min(1, "The package length is required.")
+    .transform((val) => Number(val)),
+  breadth: z
+    .string()
+    .min(1, "The package breadth is required.")
+    .transform((val) => Number(val)),
+  height: z
+    .string()
+    .min(1, "The package height is required.")
+    .transform((val) => Number(val)),
+  invoiceNo: z
+    .string()
+    .min(2, "The invoice number is required.")
+    .transform((val) => Number(val)),
   invoiceDate: z.string(),
   invoiceCurrency: z.string(),
   orderId: z.string(),
@@ -29,59 +47,102 @@ const formSchema = z.object({
       productName: z.string().min(2, "Product Title is required."),
       sku: z.string().optional(),
       hsn: z.string().min(2, "HSN is required."),
-      qty: z.string().min(2, "Product Qty is required."),
-      unitPrice: z.string().min(2, "Product Price is required."),
+      qty: z
+        .string()
+        .min(2, "Product Qty is required.")
+        .transform((val) => Number(val)),
+      unitPrice: z
+        .string()
+        .min(2, "Product Price is required.")
+        .transform((val) => Number(val)),
       igst: z.string(),
     }),
   ),
 });
-import { StepperSidebar } from "./elements/StepperSidebar";
-import { ComboboxDemo } from "./elements/ComboboxDemo";
-import ItemDetails from "./elements/ItemDetails";
 
-export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, orderDetails }) => {
+export const OrderDetails = ({ setActiveStep }) => {
   const [date, setDate] = React.useState<Date>();
+  const [error, setError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const dispatch = useDispatch();
+  const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      actualWeight: 0,
-      length: 0,
-      breadth: 0,
-      height: 0,
-      invoiceNo: "",
-      invoiceDate: "",
-      invoiceCurrency: "",
-      orderId: "",
-      iossNumber: "",
-      items: [
-        {
-          productName: "",
-          sku: "",
-          hsn: "",
-          qty: "",
-          unitPrice: "",
-          igst: "",
-        },
-      ],
-    },
+    defaultValues: orderDetails,
   });
 
-  useEffect(() => {
-    const savedData = localStorage.getItem("orderFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      Object.keys(parsedData).forEach((key) => {
-        form.setValue(key as keyof z.infer<typeof formSchema>, parsedData[key]);
-      });
-    }
-  }, [form]);
+  const orderData = form.watch();
+  const itemDetails = (form.getValues("items") || []).map((item: any, index: any) => ({
+    productName: form.watch(`items.${index}.productName`),
+    sku: form.watch(`items.${index}.sku`),
+    hsn: form.watch(`items.${index}.hsn`),
+    qty: form.watch(`items.${index}.qty`),
+    unitPrice: form.watch(`items.${index}.unitPrice`),
+    igst: form.watch(`items.${index}.igst`),
+  }));
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    localStorage.setItem("orderFormData", JSON.stringify(values));
-    nextStep(values);
-  }
+  const AmountApi = async () => {
+    const url = "https://api.fr.stg.shipglobal.in/api/v1/orders/validate-order-invoice";
+    const token =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbnRpdHlJZCI6MzAwNjcsImNyZWF0ZWRfYXQiOnsiZGF0ZSI6IjIwMjUtMDItMTEgMTc6MTY6MTAuNTk0ODQ3IiwidGltZXpvbmVfdHlwZSI6MywidGltZXpvbmUiOiJBc2lhL0tvbGthdGEifSwiZXhwaXJlc19hdCI6eyJkYXRlIjoiMjAyNS0wMy0xMyAxNzoxNjoxMC41OTQ4NDkiLCJ0aW1lem9uZV90eXBlIjozLCJ0aW1lem9uZSI6IkFzaWEvS29sa2F0YSJ9LCJpZCI6IjU0YTVhMDZmLTlmMTItNDNkMS05NjRmLWY0NmU0NDAzZmJlYiIsInJlbW90ZV9lbnRpdHlfaWQiOjB9.Mgqd-wgxjBYG2o9rztEvgrEzuEXxUYjoKXcmmDCg1jw";
+
+    const payload = {
+      csbv: "0",
+      currency_code: orderData.invoiceCurrency,
+      package_breadth: Number(orderData.breadth),
+      package_height: Number(orderData.height),
+      package_length: Number(orderData.length),
+      package_weight: Number(orderData.actualWeight),
+      vendor_order_item: itemDetails.map((item) => ({
+        vendor_order_item_name: item.productName,
+        vendor_order_item_sku: item.sku,
+        vendor_order_item_hsn: item.hsn,
+        vendor_order_item_quantity: Number(item.qty),
+        vendor_order_item_unit_price: Number(item.unitPrice),
+        vendor_order_item_tax_rate: item.igst,
+      })),
+    };
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (result.data?.box?.["1"]?.exceeds_limit) {
+        setErrorMessage(result.data.box["1"].exceeds_text);
+        setError(true);
+        return false;
+      } else {
+        setErrorMessage("");
+        setError(false);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error fetching order validation:", error);
+      setErrorMessage("There was an error while validating the order.");
+      setError(true);
+      return false;
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const isValid = await AmountApi();
+
+    if (!isValid) {
+      return;
+    }
+
+    console.log("Form Values:", values);
+    dispatch(updateOrderData(values));
+    setActiveStep(4);
+  };
 
   const frameworks = [
     {
@@ -106,159 +167,153 @@ export const OrderDetails = ({ nextStep, prevStep, setActiveStep, activeStep, or
     },
   ];
   return (
-    <div className="lg:flex lg:flex-row lg:space-x-6 lg:justify-center py-12 lg:px-12 px-6">
-      {" "}
-      <StepperSidebar setActiveStep={setActiveStep} activeStep={activeStep} />
-      <div className="bg-white rounded-md lg:w-2/3 px-6 pt-3">
-        <div className="font-semibold text-lg mt-9 ml-6 mb-2">Shipment Type</div>
-        <p className="text-gray-400 text-sm font-semibold ml-6 mb-4">
-          Please select the shipment Mode. Note: CSB-V Shipments can only be sent through ShipGlobal Direct. If other
-          partner services are needed please select CSB IV.
-        </p>
-        <p className="text-gray-500 ml-6 font-medium">
-          If you need more info, please call/whatsapp at
-          <span className="text-blue-500 cursor-pointer">+91 9811098919.</span>
-        </p>
-        <div className="grid lg:grid-cols-2 mx-10 gap-6 lg:space-x-4 mt-6 cursor-pointer">
-          <div className="border border-dashed border-blue-300 bg-blue-100 rounded-md py-4">
-            <p className="font-bold text-center mb-4">CSB IV</p>
-            <div className="flex flex-row gap-x-5 lg:gap-x-10 items-center ml-12">
-              <UserRoundCheck className="fill-blue-500 text-blue-500" />
-              <div className="text-sm text-gray-500 font-semibold mb-2">
-                <p>Non Commercial Mode</p>
-                <p>Minimum Documentation</p>
-                <p>All Service Providers</p>
-              </div>
-            </div>
-          </div>
-          <div className="border border-dashed border-gray-300 bg-gray-100 rounded-md py-4">
-            <p className="font-bold text-center mb-4">CSB V</p>
-            <div className="flex flex-row gap-x-5 lg:gap-x-10 items-center ml-11">
-              <FilePenLine />
-              <div className="text-sm text-gray-500 font-semibold mb-2">
-                <p>Non Commercial Mode</p>
-                <p>Minimum Documentation</p>
-                <p>All Service Providers</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div className="font-semibold text-lg mt-9 ml-6">Shipment Details</div>
-          <p className="text-gray-400 text-sm font-semibold ml-6 mb-3">
-            If you need more info, please check out <span className="text-blue-500 cursor-pointer">Help Page.</span>
-          </p>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ml-6">
-                <ShipmentDetailsComponent control={form.control} name="actualWeight" label="Actual Weight" unit="KG" />
-                <ShipmentDetailsComponent control={form.control} name="length" label="Length" unit="CM" />
-                <ShipmentDetailsComponent control={form.control} name="breadth" label="Breadth" unit="CM" />
-                <ShipmentDetailsComponent control={form.control} name="height" label="Height" unit="CM" />
-              </div>
-
-              <div>
-                <div className="font-semibold text-lg mt-9 ml-6">Order Details</div>
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ml-6 items-center">
-                  <OrderFormComponent control={form.control} label="Invoice No." name="invoiceNo" />
-                  <FormField
-                    control={form.control}
-                    name="invoiceDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="mb-1 text-black">
-                          Invoice Date<span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex flex-row border border-gray-300 rounded">
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "lg:w-[240px] w-[700px] justify-start text-left font-normal",
-                                    !date && "text-muted-foreground",
-                                  )}
-                                >
-                                  <CalendarIcon />
-                                  {date ? format(date, "PPP") : ""}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                  mode="single"
-                                  selected={date}
-                                  onSelect={(date) => {
-                                    setDate(date);
-                                    field.onChange(date);
-                                  }}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                          </div>
-                        </FormControl>
-                        <FormMessage className="font-normal text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="">
-                    <FormLabel className="mb-3 text-black">
-                      Invoice Currency
-                      <span className="text-red-500">*</span>
+    <div className="px-3 md:px-7 py-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
+          <div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-2 gap-x-4">
+              <OrderFormComponent
+                control={form.control}
+                label="Invoice No."
+                name="invoiceNo"
+                placeholder="Enter Invoice Number..."
+              />
+              <FormField
+                control={form.control}
+                name="invoiceDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="mb-1 text-black">
+                      Invoice Date<span className="text-red-500">*</span>
                     </FormLabel>
-                    <FormField
-                      control={form.control}
-                      name="invoiceCurrency"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <div className="flex flex-row border border-gray-300 rounded mt-2">
-                              <ComboboxDemo
-                                label="INR"
-                                frameworks={frameworks}
-                                value={field.value}
-                                onChange={(value) => field.onChange(value)}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage className="font-normal text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                    <FormControl>
+                      <div className="flex flex-row border border-gray-300 rounded">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "lg:w-[240px] w-[700px] justify-start text-left font-normal",
+                                !date && "text-muted-foreground",
+                              )}
+                              placeholder="Pick a Date"
+                            >
+                              <CalendarIcon />
+                              {date ? format(date, "PPP") : ""}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={date}
+                              onSelect={(date) => {
+                                setDate(date);
+                                field.onChange(date);
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </FormControl>
+                    <FormMessage className="font-normal text-xs" />
+                  </FormItem>
+                )}
+              />
 
-                  <OrderFormComponent control={form.control} label="Order Id/Ref. Id" name="orderId" />
-                </div>
-                <div className="ml-6 my-6 lg:w-1/4 lg:pr-4">
-                  <OrderFormComponent control={form.control} label="IOSS Number:" name="iossNumber" />
-                </div>
+              <div className="">
+                <FormLabel className="mb-3 text-black">
+                  Invoice Currency
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormField
+                  control={form.control}
+                  name="invoiceCurrency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex flex-row border border-gray-300 rounded mt-2">
+                          <ComboboxDemo
+                            label="INR"
+                            frameworks={frameworks}
+                            value={field.value}
+                            onChange={(value: any) => field.onChange(value)}
+                            placeholder={"INR"}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage className="font-normal text-xs" />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              <div>
-                <div className="font-semibold text-lg mt-9 ml-4">Item Details</div>
+              <OrderFormComponent
+                control={form.control}
+                label="Order/Reference ID"
+                name="orderId"
+                placeholder="Enter Order/Reference ID..."
+              />
 
-                <ItemDetails form={form} />
-              </div>
+              <OrderFormComponent
+                control={form.control}
+                label="IOSS Number:"
+                name="iossNumber"
+                placeholder="Enter IOSS Number..."
+              />
+            </div>
+          </div>
+          <p className="text-base font-bold mt-6">Box Measurements</p>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-2 gap-x-4">
+            <ShipmentDetailsComponent
+              control={form.control}
+              name="actualWeight"
+              label="Dead Weight"
+              unit="kg"
+              placeholder="Eg. 1.25"
+            />
+            <ShipmentDetailsComponent
+              control={form.control}
+              name="length"
+              label="Length"
+              unit="cm"
+              placeholder="Eg. 10"
+            />
+            <ShipmentDetailsComponent
+              control={form.control}
+              name="breadth"
+              label="Breadth"
+              unit="cm"
+              placeholder="Eg. 10"
+            />
+            <ShipmentDetailsComponent
+              control={form.control}
+              name="height"
+              label="Height"
+              unit="cm"
+              placeholder="Eg. 10"
+            />
+          </div>
+          
+          <div>
+            <div className="flex gap-x-1 mt-6">
+              <div className="font-bold text-base">Item(s) Details</div>
+              <p className="bg-orange-50 text-red-500 rounded-md text-xs text-center p-1">Items that can export</p>
+            </div>
 
-              <div className="mt-6 flex justify-between">
-                <Button
-                  type="submit"
-                  className="px-4 py-2 mb-6 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                  onClick={prevStep}
-                >
-                  Back
-                </Button>
-                <Button type="submit" className="px-4 py-2 mb-6 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  Continue
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
-      </div>
+            <ItemDetails form={form} errorMessage={errorMessage}/>
+          </div>
+
+          <div className="flex justify-end mt-6">
+            <button
+              type="submit"
+              className="bg-blue-800 text-sm font-medium text-white rounded-md px-4 py-2 hover:bg-blue-800/90"
+            >
+              Select Shipping
+            </button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
