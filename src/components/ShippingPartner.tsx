@@ -2,48 +2,59 @@ import { useEffect, useState } from "react";
 import { CircleCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { updateShippingPartner } from "./redux/addOrderSlice";
-import { fetchShipperRates } from "./elements/ShipperApi";
+import { updateShippingProvider } from "./redux/orderSlice";
+import { fetchShippingRates } from "./elements/ShippingAPI";
 
-function ShippingPartner() {
+function ShippingProvider() {
   const dispatch = useDispatch();
-  const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
-  const ShippingPartner = useSelector((state: RootState) => state.addOrder.shippingPartner);
-  const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
-  const step = useSelector((state: RootState) => state.addOrder.step);
+  const orderDetails = useSelector((state: RootState) => state.order.orderDetails);
+  const selectedShippingProvider = useSelector((state: RootState) => state.order.selectedShippingProvider);
+  const buyerInformation = useSelector((state: RootState) => state.order.buyerInformation);
+  const currentStep = useSelector((state: RootState) => state.order.currentStep);
 
-  const [courierOptions, setCourierOptions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [availableShippingOptions, setAvailableShippingOptions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [chosenShippingProvider, setChosenShippingProvider] = useState<any | null>(null);
 
-  const VolumetricWeight =
+  const volumetricWeight =
     (Number(orderDetails.length) * Number(orderDetails.breadth) * Number(orderDetails.height)) / 5000;
 
   useEffect(() => {
-     
-      const payload = {
-        customer_shipping_country_code: buyerDetails.country,
-        customer_shipping_postcode: buyerDetails.pincode,
-        package_breadth: Number(orderDetails.breadth),
-        package_height: orderDetails.height,
-        package_length: Number(orderDetails.length),
-        package_weight: Number(orderDetails.actualWeight),
-      };
-      fetchShipperRates(payload).then((rates) => {
-        setCourierOptions(
+    const requestPayload = {
+      customer_shipping_country_code: buyerInformation.country,
+      customer_shipping_postcode: buyerInformation.pincode,
+      package_breadth: Number(orderDetails.breadth),
+      package_height: orderDetails.height,
+      package_length: Number(orderDetails.length),
+      package_weight: Number(orderDetails.actualWeight),
+    };
+
+    setIsLoading(true);
+    fetchShippingRates(requestPayload)
+      .then((rates) => {
+        setAvailableShippingOptions(
           rates.map((rate: any) => ({
             name: rate.display_name,
-            time: rate.transit_time,
-            rate: rate.rate,
-          })),
+            deliveryTime: rate.transit_time,
+            price: rate.rate,
+          }))
         );
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setApiError("Failed to fetch shipping options. Please try again.");
+        setIsLoading(false);
       });
-    
-  }, [step, buyerDetails, orderDetails]);
+  }, [currentStep, buyerInformation, orderDetails]);
 
-  function onSubmit() {
-    if (!ShippingPartner.name) return;
-    dispatch(updateShippingPartner(ShippingPartner));
+  function handleShippingProviderSelection(provider: any) {
+    setChosenShippingProvider(provider);
+  }
+
+  function handleSubmit() {
+    if (!chosenShippingProvider) return;
+    dispatch(updateShippingProvider(chosenShippingProvider));
   }
 
   return (
@@ -63,60 +74,53 @@ function ShippingPartner() {
           <p className="text-xs">Dead weight</p>
         </div>
         <div className={`border border-gray-300 text-center bg-gray-50 px-4 py-2 md:min-w-36 min-w-32 rounded-md`}>
-          <p className="font-medium text-base">{VolumetricWeight.toFixed(2)} KG</p>
+          <p className="font-medium text-base">{volumetricWeight.toFixed(2)} KG</p>
           <p className="text-xs">Volumetric weight</p>
         </div>
         <div
           className={`border border-orange-300 bg-yellow-100 text-orange-500 text-center px-4 py-2 min-w-32 rounded-md`}
         >
           <p className="font-medium text-base">
-            {Math.max(Number(orderDetails.actualWeight), VolumetricWeight).toFixed(2)} KG
+            {Math.max(Number(orderDetails.actualWeight), volumetricWeight).toFixed(2)} KG
           </p>
           <p className="text-xs">Billed weight</p>
         </div>
       </div>
 
-      {loading && <p className="text-center mt-5">Loading courier options...</p>}
+      {isLoading && <p className="text-center mt-5">Loading available shipping options...</p>}
 
-      {error && <p className="text-center text-red-500 mt-5">{error}</p>}
+      {apiError && <p className="text-center text-red-500 mt-5">{apiError}</p>}
 
-      {courierOptions.length > 1 && (
+      {availableShippingOptions.length > 1 && (
         <p className="mt-5 font-semibold">
-          Showing {courierOptions.length} {courierOptions.length > 1 ? "results" : "result"}
+          Showing {availableShippingOptions.length} {availableShippingOptions.length > 1 ? "results" : "result"}
         </p>
       )}
 
-      {courierOptions.length !== 0 && (
+      {availableShippingOptions.length !== 0 && (
         <table className="mt-5 w-full relative text-xs lg:text-sm border-separate border-spacing-y-2.5">
           <thead>
             <tr className="text-left text-slate-500 bg-slate-50">
-              <th className="p-4 border-t border-b border-l rounded-l-md">Courier Partner</th>
+              <th className="p-4 border-t border-b border-l rounded-l-md">Shipping Provider</th>
               <th className="border-t border-b">Delivery Time</th>
-              <th className="border-t border-b">Shipment Rate</th>
+              <th className="border-t border-b">Shipment Price</th>
               <th className="border-t border-b border-r rounded-r-md pr-2">Select</th>
             </tr>
           </thead>
           <tbody>
-            {courierOptions.map((courier, index) => (
+            {availableShippingOptions.map((provider, index) => (
               <tr
                 key={index}
                 className="cursor-pointer"
-                onClick={() =>
-                  dispatch(
-                    updateShippingPartner({
-                      name: courier.name,
-                      rate: courier.rate,
-                    }),
-                  )
-                }
+                onClick={() => handleShippingProviderSelection(provider)}
               >
-                <td className="font-medium pt-8 pb-4 pl-5 border-t border-b border-l rounded-l-md">{courier.name}</td>
-                <td className="border-t border-b pt-4">{courier.time}</td>
-                <td className="border-t border-b pt-4">{courier.rate}</td>
+                <td className="font-medium pt-8 pb-4 pl-5 border-t border-b border-l rounded-l-md">{provider.name}</td>
+                <td className="border-t border-b pt-4">{provider.deliveryTime}</td>
+                <td className="border-t border-b pt-4">{provider.price}</td>
                 <td className="border-t border-b pt-4 border-r rounded-r-md">
                   <CircleCheck
                     className={`h-6 w-6 cursor-pointer transition-colors ${
-                      ShippingPartner?.name === courier.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
+                      chosenShippingProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
                     }`}
                   />
                 </td>
@@ -129,11 +133,11 @@ function ShippingPartner() {
       <div className="flex justify-end py-5">
         <button
           type="submit"
-          onClick={onSubmit}
+          onClick={handleSubmit}
           className={`bg-blue-800 text-sm font-medium text-white rounded-md px-4 py-2 hover:bg-blue-800/90 ${
-            !ShippingPartner.name ? "opacity-35 cursor-not-allowed" : "opacity-100"
+            !chosenShippingProvider ? "opacity-35 cursor-not-allowed" : "opacity-100"
           }`}
-          disabled={!ShippingPartner.name}
+          disabled={!chosenShippingProvider}
         >
           Pay and Order
         </button>
@@ -142,4 +146,4 @@ function ShippingPartner() {
   );
 }
 
-export default ShippingPartner;
+export default ShippingProvider;
