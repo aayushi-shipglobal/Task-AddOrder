@@ -1,21 +1,24 @@
 import { useState } from "react";
 import AccordionComponent from "@/components/elements/AccordionComponent";
-import BreadCrumb from "../components/elements/BreadCrumb";
+import BreadCrumb from "@/components/elements/BreadCrumb";
 import { ConsignorDetails } from "../components/ConsigorDetails";
 import { BuyerDetails } from "@/components/BuyerDetails";
 import { OrderDetails } from "@/components/OrderDetails";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ShippingPartner from "@/components/ShippingPartner";
 import { QuickTips } from "@/components/elements/QuickTips";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { updateStep } from "@/components/redux/addOrderSlice";
 // import {totalPrice} from "../components/elements/ItemDetails";
 
 export const AddOrderForm = () => {
-  const [activeStep, setActiveStep] = useState(1);
+ 
   const PickupAddress = useSelector((state: RootState) => state.addOrder.pickupAddress);
   const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
   const shippingPartner = useSelector((state: RootState) => state.addOrder.shippingPartner);
+  const activeStep=  useSelector((state: RootState) => state.addOrder.step);
+  const dispatch =useDispatch();
 
   const orderData = useSelector((state: RootState) => state.addOrder.orderDetailsData);
   const productValue = orderData.items?.[0]?.unitPrice * orderData.items?.[0]?.qty;
@@ -24,16 +27,16 @@ export const AddOrderForm = () => {
   const formSteps = [
     {
       title: "Consignor Details",
-      component: <ConsignorDetails setActiveStep={setActiveStep} />,
+      component: <ConsignorDetails />,
     },
 
     {
       title: "Consignee Details",
-      component: <BuyerDetails setActiveStep={setActiveStep} />,
+      component: <BuyerDetails/>,
     },
     {
       title: "Shipment Information",
-      component: <OrderDetails setActiveStep={setActiveStep} />,
+      component: <OrderDetails />,
     },
     { title: "Select Shipping Partner", component: <ShippingPartner /> },
   ];
@@ -46,15 +49,15 @@ export const AddOrderForm = () => {
         <div className="flex gap-3 mt-3">
           <div className="w-full -mt-3 rounded-md lg:w-2/3 flex flex-col">
             {formSteps.map((step, index) => (
-              <AccordionComponent
-                key={index}
-                text={step.title}
-                activeStep={activeStep}
-                isOpen={activeStep === index + 1}
-                setActiveStep={setActiveStep}
-                stepNumber={index + 1}
-                childElement={step.component}
-              />
+             <AccordionComponent
+             key={index}
+             text={step.title}
+             activeStep={activeStep}  
+             isOpen={activeStep === index + 1}  
+             setActiveStep={(step: number) => dispatch(updateStep(step))}  
+             stepNumber={index + 1}
+             childElement={step.component}
+           />
             ))}
           </div>
 

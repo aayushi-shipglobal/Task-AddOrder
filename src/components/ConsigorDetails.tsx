@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Select } from "./elements/Select";
-import { updatePickupAddress } from "./redux/addOrderSlice";
+import { updatePickupAddress, updateStep } from "./redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {RootState} from "../store";
@@ -37,7 +37,7 @@ export const ConsignorDetails = ({ setActiveStep }) => {
   function onSubmit(values: z.infer<typeof consignorSchema>) {
     console.log(values);
     dispatch(updatePickupAddress(values.pickupAddress))
-    setActiveStep(2);
+    dispatch(updateStep(2))
   }
   return (
     <div className="px-3 md:px-7 py-4">

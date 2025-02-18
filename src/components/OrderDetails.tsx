@@ -8,7 +8,7 @@ import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { updateOrderData } from "./redux/addOrderSlice";
+import { updateOrderData, updateStep } from "./redux/addOrderSlice";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -60,7 +60,7 @@ const formSchema = z.object({
   ),
 });
 
-export const OrderDetails = ({ setActiveStep }) => {
+export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date>();
   const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -141,7 +141,7 @@ export const OrderDetails = ({ setActiveStep }) => {
 
     console.log("Form Values:", values);
     dispatch(updateOrderData(values));
-    setActiveStep(4);
+   dispatch(updateStep(4))
   };
 
   const frameworks = [

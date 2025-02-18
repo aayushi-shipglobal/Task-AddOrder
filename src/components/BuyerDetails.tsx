@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { CountryApi } from "./elements/CountryApi";
 import { StatesApi } from "./elements/StatesApi";
 import { Check } from "lucide-react";
-import { updateBuyerData } from "./redux/addOrderSlice";
+import { updateBuyerData, updateStep } from "./redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 
@@ -34,7 +34,7 @@ const formSchema = z.object({
   state1: z.string().min(1, "The customer billing state is required"),
 });
 
-export const BuyerDetails = ({ setActiveStep }) => {
+export const BuyerDetails = () => {
   const [checked, setChecked] = useState(true);
   const dispatch= useDispatch();
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
@@ -66,7 +66,7 @@ export const BuyerDetails = ({ setActiveStep }) => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Form submitted", values);
     dispatch(updateBuyerData(values));
-    setActiveStep(3);
+    dispatch(updateStep(3))
   }
 
   return (
