@@ -1,32 +1,31 @@
 import { useState, useEffect } from "react";
-import { BuyerDetails } from "../BuyerDetails";
-import { OrderDetails } from "../OrderDetails";
-import { ShippingPartner } from "../ShippingPartner";
-import { PlaceOrder } from "../PlaceOrder";
+import { BuyerDetails } from "../AddOrderForms/BuyerDetails";
+import { OrderDetails } from "../AddOrderForms/OrderDetails";
+import { ShippingPartner } from "../AddOrderForms/ShippingPartner";
+import { PlaceOrder } from "../AddOrderForms/PlaceOrder";
 
 export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(() => {
     const savedActiveStep = localStorage.getItem("activeStep");
-    return savedActiveStep ? Number(savedActiveStep) : 1; 
+    return savedActiveStep ? Number(savedActiveStep) : 1;
   });
 
   const [buyerDetails, setBuyerDetails] = useState(() => {
     const savedBuyerDetails = localStorage.getItem("buyerDetails");
-    return savedBuyerDetails ? JSON.parse(savedBuyerDetails) : {}; 
+    return savedBuyerDetails ? JSON.parse(savedBuyerDetails) : {};
   });
 
   const [orderDetails, setOrderDetails] = useState(() => {
     const savedOrderDetails = localStorage.getItem("orderDetails");
-    return savedOrderDetails ? JSON.parse(savedOrderDetails) : {}; 
+    return savedOrderDetails ? JSON.parse(savedOrderDetails) : {};
   });
 
   useEffect(() => {
     localStorage.setItem("activeStep", String(activeStep));
-   
   }, [activeStep]);
 
   const nextStep = (data: {}) => {
-    setBuyerDetails((prevDetails:any) => ({
+    setBuyerDetails((prevDetails: any) => ({
       ...prevDetails,
       ...data,
     }));

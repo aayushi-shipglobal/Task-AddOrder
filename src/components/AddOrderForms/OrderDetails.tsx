@@ -2,22 +2,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ShipmentDetailsComponent } from "./elements/ShipmentDetailsComponent";
-import { OrderFormComponent } from "./elements/OrderFormComponent";
+import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
+import { OrderFormComponent } from "../elements/OrderFormComponent";
 import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { updateOrderData, updateStep } from "./redux/addOrderSlice";
+import { updateOrderData, updateStep } from "../redux/addOrderSlice";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import ItemDetails from "./elements/ItemDetails";
+import ItemDetails from "../elements/ItemDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { ComboboxDemo } from "./elements/ComboboxDemo";
-import { orderSchema } from "./schemas/ValidationSchemas";
-
+import { ComboboxDemo } from "../elements/ComboboxDemo";
+import { orderSchema } from "../schemas/ValidationSchemas";
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date>();
@@ -91,7 +90,7 @@ export const OrderDetails = () => {
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     const isValid = await AmountApi();
 
     if (!isValid) {

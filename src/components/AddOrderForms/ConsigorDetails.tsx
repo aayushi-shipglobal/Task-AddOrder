@@ -2,12 +2,13 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Select } from "./elements/Select";
-import { updatePickupAddress, updateStep } from "./redux/addOrderSlice";
+import { Select } from "../elements/Select";
+import { updatePickupAddress, updateStep } from "../redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { RootState } from "@/store";
-import { consignorSchema } from "./schemas/ValidationSchemas";
+import { consignorSchema } from "../schemas/ValidationSchemas";
+import { Button } from "react-day-picker";
 
 export const ConsignorDetails = () => {
   const dispatch = useDispatch();

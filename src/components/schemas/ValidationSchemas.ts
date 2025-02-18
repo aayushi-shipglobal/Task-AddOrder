@@ -33,7 +33,6 @@ export const buyerSchema = z.object({
   Country: z.string().min(1, "Please select a country"),
   state1: z.string().min(1, "Please select a state"),
 });
-
  export const orderSchema = z.object({
   actualWeight: z
     .string()

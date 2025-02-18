@@ -1,4 +1,4 @@
-import { StepperSidebar } from "./elements/StepperSidebar";
+import { StepperSidebar } from "../elements/StepperSidebar";
 import { Button } from "@/components/ui/button";
 
 export const PlaceOrder = ({ prevStep, setActiveStep, activeStep, buyerDetails }) => {

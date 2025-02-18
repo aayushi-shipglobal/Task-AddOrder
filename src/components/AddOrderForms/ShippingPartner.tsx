@@ -3,7 +3,7 @@ import { CircleCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { updateShippingPartner } from "@/components/redux/addOrderSlice";
-import { fetchshippers } from "@/components/elements/ShipperApi";
+import { fetchshippers } from "@/components/Api/ShipperApi";
 
 function ShippingPartner() {
   const dispatch = useDispatch();

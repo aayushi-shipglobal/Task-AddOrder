@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ComboboxDemo } from "./ComboboxDemo";
+import { ComboboxDemo } from "../elements/ComboboxDemo";
 
 type Props = {
   form: any;
