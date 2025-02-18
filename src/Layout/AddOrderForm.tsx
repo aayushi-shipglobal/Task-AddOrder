@@ -1,7 +1,6 @@
-import { useState } from "react";
 import AccordionComponent from "@/components/elements/AccordionComponent";
 import BreadCrumb from "@/components/elements/BreadCrumb";
-import { ConsignorDetails } from "../components/ConsigorDetails";
+import { ConsignorDetails } from "@/components/ConsigorDetails";
 import { BuyerDetails } from "@/components/BuyerDetails";
 import { OrderDetails } from "@/components/OrderDetails";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +9,6 @@ import ShippingPartner from "@/components/ShippingPartner";
 import { QuickTips } from "@/components/elements/QuickTips";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { updateStep } from "@/components/redux/addOrderSlice";
-// import {totalPrice} from "../components/elements/ItemDetails";
 
 export const AddOrderForm = () => {
  
@@ -24,7 +22,7 @@ export const AddOrderForm = () => {
   const productValue = orderData.items?.[0]?.unitPrice * orderData.items?.[0]?.qty;
   const gst = 0.18 * shippingPartner.rate;
   const total = gst + shippingPartner.rate;
-  const Steps = [
+  const addOrderSteps = [
     {
       title: "Consignor Details",
       component: <ConsignorDetails />,
@@ -48,7 +46,7 @@ export const AddOrderForm = () => {
         <BreadCrumb />
         <div className="flex gap-3 mt-3">
           <div className="w-full -mt-3 rounded-md lg:w-2/3 flex flex-col">
-            {Steps.map((step, index) => (
+            {addOrderSteps.map((step, index) => (
              <AccordionComponent
              key={index}
              text={step.title}

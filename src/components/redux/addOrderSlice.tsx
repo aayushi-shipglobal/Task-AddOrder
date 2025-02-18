@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { date } from "zod";
 
 const initialState = {
   buyerDetailsData: {
@@ -27,7 +28,7 @@ const initialState = {
     breadth: "",
     height: "",
     invoiceNo: "",
-    invoiceDate: "",
+    invoiceDate: date,
     invoiceCurrency: "INR",
     orderId: "",
     iossNumber: "",

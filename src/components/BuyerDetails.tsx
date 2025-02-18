@@ -11,44 +11,15 @@ import { Check } from "lucide-react";
 import { updateBuyerData, updateStep } from "./redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-
-const formSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "First name is required.")
-    .regex(/^[A-Za-z]+$/, "Please enter alphabetic characters"),
-  lastName: z
-    .string()
-    .min(1, "Last name is required.")
-    .regex(/^[A-Za-z]+$/, "Please enter alphabetic characters"),
-  mobileNo: z
-    .string()
-    .min(1, "Mobile number is required.")
-    .regex(/^[0-9()+\- ]+$/, "Only numbers,brackets, hypen and + allowed."),
-  email: z.string().min(1, "Please enter a valid email address").email("Please enter a valid email address"),
-  country: z.string().min(1, "Please select a country"),
-  state: z.string().min(1, "Please select a state"),
-  address1: z.string().min(1, " Address 1 is required."),
-  landmark: z.string().optional(),
-  address2: z.string().min(9, "Address 2 is required."),
-  pincode: z.string().min(1, "Pincode is required."),
-  city: z.string().min(1, "City is required."),
-  address3: z.string().min(1, " Address 1 is required."),
-  address4: z.string().min(1, " Address 2 is required."),
-  mark: z.string().optional(),
-  pincode1: z.string().min(1, "Pincode is required."),
-  city1: z.string().min(1, "City is required."),
-  Country: z.string().min(1, "Please select a country"),
-  state1: z.string().min(1, "Please select a state"),
-});
+import { buyerSchema } from "./schemas/ValidationSchemas";
 
 export const BuyerDetails = () => {
   const [checked, setChecked] = useState(true);
   const dispatch = useDispatch();
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof buyerSchema>>({
+    resolver: zodResolver(buyerSchema),
     defaultValues: buyerDetails,
   });
 

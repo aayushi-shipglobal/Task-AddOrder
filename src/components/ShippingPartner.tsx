@@ -39,13 +39,11 @@ function ShippingPartner() {
         );
       });
     
-     console.log("array",courierOptions)
   }, [step, buyerDetails, orderDetails]);
 
   function onSubmit() {
     if (!ShippingPartner.name) return;
     dispatch(updateShippingPartner(ShippingPartner));
-    console.log("Shipping Partner", ShippingPartner, "Rate:", ShippingPartner.rate);
   }
 
   return (

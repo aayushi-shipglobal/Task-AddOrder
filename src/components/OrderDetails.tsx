@@ -16,49 +16,8 @@ import ItemDetails from "./elements/ItemDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { ComboboxDemo } from "./elements/ComboboxDemo";
+import { orderSchema } from "./schemas/ValidationSchemas";
 
-const formSchema = z.object({
-  actualWeight: z
-    .string()
-    .min(1, "The package weight is required.")
-   ,
-  length: z
-    .string()
-    .min(1, "The package length is required.")
-   ,
-  breadth: z
-    .string()
-    .min(1, "The package breadth is required.")
-    ,
-  height: z
-    .string()
-    .min(1, "The package height is required.")
-    ,
-  invoiceNo: z
-    .string()
-    .min(2, "The invoice number is required.")
-   ,
-  invoiceDate: z.string(),
-  invoiceCurrency: z.string(),
-  orderId: z.string(),
-  iossNumber: z.string(),
-  items: z.array(
-    z.object({
-      productName: z.string().min(2, "Product Title is required."),
-      sku: z.string().optional(),
-      hsn: z.string().min(2, "HSN is required."),
-      qty: z
-        .string()
-        .min(1, "Product Qty is required.")
-        ,
-      unitPrice: z
-        .string()
-        .min(1, "Product Price is required.")
-        ,
-      igst: z.string(),
-    }),
-  ),
-});
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date>();
@@ -67,8 +26,8 @@ export const OrderDetails = () => {
   const dispatch = useDispatch();
   const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof orderSchema>>({
+    resolver: zodResolver(orderSchema),
     defaultValues: orderDetails,
   });
 
@@ -138,10 +97,8 @@ export const OrderDetails = () => {
     if (!isValid) {
       return;
     }
-
-    console.log("Form Values:", values);
     dispatch(updateOrderData(values));
-   dispatch(updateStep(4))
+    dispatch(updateStep(4));
   };
 
   const frameworks = [
@@ -294,14 +251,14 @@ export const OrderDetails = () => {
               placeholder="Eg. 10"
             />
           </div>
-          
+
           <div>
             <div className="flex gap-x-1 mt-6">
               <div className="font-bold text-base">Item(s) Details</div>
               <p className="bg-orange-50 text-red-500 rounded-md text-xs text-center p-1">Items that can export</p>
             </div>
 
-            <ItemDetails form={form} errorMessage={errorMessage}/>
+            <ItemDetails form={form} errorMessage={errorMessage} />
           </div>
 
           <div className="flex justify-end mt-6">

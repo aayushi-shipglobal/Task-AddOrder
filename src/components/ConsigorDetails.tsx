@@ -6,18 +6,12 @@ import { Select } from "./elements/Select";
 import { updatePickupAddress, updateStep } from "./redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import {RootState} from "../store";
+import { RootState } from "@/store";
+import { consignorSchema } from "./schemas/ValidationSchemas";
 
 export const ConsignorDetails = () => {
-  const dispatch= useDispatch();
-  const PickupAddress = useSelector(
-    (state: RootState) => state.addOrder.pickupAddress
-  );
-
-
-  const consignorSchema = z.object({
-    pickupAddress: z.string().min(1, "Please select an address"),
-  });
+  const dispatch = useDispatch();
+  const PickupAddress = useSelector((state: RootState) => state.addOrder.pickupAddress);
 
   const consignorForm = useForm<z.infer<typeof consignorSchema>>({
     resolver: zodResolver(consignorSchema),
@@ -25,19 +19,15 @@ export const ConsignorDetails = () => {
       pickupAddress: PickupAddress || "",
     },
   });
-
   useEffect(() => {
-    consignorForm.setValue("pickupAddress",PickupAddress);
-    console.log(PickupAddress);
+    consignorForm.setValue("pickupAddress", PickupAddress);
   }, [PickupAddress, consignorForm]);
 
-
-  const data = consignorForm.watch("pickupAddress");
+  const consignorData = consignorForm.watch("pickupAddress");
 
   function onSubmit(values: z.infer<typeof consignorSchema>) {
-    console.log(values);
-    dispatch(updatePickupAddress(values.pickupAddress))
-    dispatch(updateStep(2))
+    dispatch(updatePickupAddress(values.pickupAddress));
+    dispatch(updateStep(2));
   }
   return (
     <div className="px-3 md:px-7 py-4">
@@ -50,9 +40,9 @@ export const ConsignorDetails = () => {
               <Select form={consignorForm} name="pickupAddress" />
             </div>
           </div>
-          {data && (
+          {consignorData && (
             <div className="space-y-1 w-5/6">
-              <p>{data}</p>
+              <p>{consignorData}</p>
             </div>
           )}
 
