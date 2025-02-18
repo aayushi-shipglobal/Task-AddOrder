@@ -17,6 +17,7 @@ const initialState = {
     city: "",
     pincode1: "",
     city1: "",
+    Country:"",
     state1: "",
     mark: "",
   },

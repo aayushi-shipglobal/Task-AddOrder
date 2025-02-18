@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {RootState} from "../store";
 
-export const ConsignorDetails = ({ setActiveStep }) => {
+export const ConsignorDetails = () => {
   const dispatch= useDispatch();
   const PickupAddress = useSelector(
     (state: RootState) => state.addOrder.pickupAddress

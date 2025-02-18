@@ -24,7 +24,7 @@ export const AddOrderForm = () => {
   const productValue = orderData.items?.[0]?.unitPrice * orderData.items?.[0]?.qty;
   const gst = 0.18 * shippingPartner.rate;
   const total = gst + shippingPartner.rate;
-  const formSteps = [
+  const Steps = [
     {
       title: "Consignor Details",
       component: <ConsignorDetails />,
@@ -48,7 +48,7 @@ export const AddOrderForm = () => {
         <BreadCrumb />
         <div className="flex gap-3 mt-3">
           <div className="w-full -mt-3 rounded-md lg:w-2/3 flex flex-col">
-            {formSteps.map((step, index) => (
+            {Steps.map((step, index) => (
              <AccordionComponent
              key={index}
              text={step.title}
