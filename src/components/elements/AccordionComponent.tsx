@@ -1,40 +1,40 @@
 import { Check } from "lucide-react";
 
-type AccordionComponentProps = {
+type AccordionProps = {
   text: string;
   activeStep: number;
-  setActiveStep: (arg0: number) => void;
+  setActiveStep: (step: number) => void;
   stepNumber: number;
   isOpen: boolean;
-  childElement: JSX.Element;
+  content: JSX.Element;
   className?: string;
 };
 
-const AccordionComponent = ({
+export const AccordionComponent = ({
   text,
   activeStep,
   stepNumber,
   setActiveStep,
   isOpen,
-  childElement,
-  
-}: AccordionComponentProps) => {
+  content,
+  className,
+}: AccordionProps) => {
+  const isCurrentStep = activeStep === stepNumber;
+  const isStepCompleted = activeStep > stepNumber;
+  const stepStyles = isStepCompleted
+    ? "bg-green-500 text-black"
+    : isCurrentStep
+    ? "bg-black text-white"
+    : "bg-gray-200 text-black";
+  const textColor = isCurrentStep ? "text-black" : "text-gray-500";
+  const maxHeightClass = isOpen ? "max-h-full opacity-100" : "max-h-0 opacity-0";
+
   return (
-    <div className={`border rounded-sm mt-2 w-full ${isOpen ? "bg-gray-50" : "bg-white"}`}>
-      <div className="flex flex-row cursor-pointer py-2.5 items-center justify-between transition duration-300">
-        <div
-          className={`cursor-pointer items-center gap-x-2 flex flex-row ${
-            activeStep === stepNumber ? "text-black" : "text-gray-500"
-          } px-2 lg:px-4 text-sm font-medium`}
-        >
-          <div
-            className={`text-center w-6 h-6 py-0.5 rounded-sm 
-              ${activeStep < stepNumber && "bg-gray-200 text-black"}
-              ${activeStep > stepNumber && "bg-green-500 text-black"}
-              ${activeStep === stepNumber && "bg-black text-white"}
-            `}
-          >
-            {activeStep > stepNumber ? (
+    <div className={`border rounded-sm mt-2 w-full ${isOpen ? "bg-gray-50" : "bg-white"} ${className}`}>
+      <div className="flex items-center justify-between py-2.5 cursor-pointer transition duration-200">
+        <div className={`flex items-center gap-x-2 px-2 lg:px-4 text-sm font-medium ${textColor}`}>
+          <div className={`text-center w-6 h-6 py-0.5 rounded-sm ${stepStyles}`}>
+            {isStepCompleted ? (
               <Check className="text-white size-5 pt-0.5 pl-1" />
             ) : (
               stepNumber
@@ -43,9 +43,9 @@ const AccordionComponent = ({
           {text}
         </div>
 
-        {activeStep > stepNumber && (
+        {isStepCompleted && (
           <button
-            className="text-blue-800 underline text-sm mr-8"
+            className="text-blue-800 underline text-sm mr-8 font-semibold"
             onClick={() => setActiveStep(stepNumber)}
           >
             Change
@@ -53,17 +53,12 @@ const AccordionComponent = ({
         )}
       </div>
 
-      <div
-        className={`transition-all duration-500 ease-in-out overflow-hidden ${
-          isOpen ? "max-h-full opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
+      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${maxHeightClass}`}>
         <div className={`${!isOpen && "hidden"} border-t-[1px] bg-white text-black`}>
-          {childElement}
+          {content}
         </div>
       </div>
     </div>
   );
 };
 
-export default AccordionComponent;

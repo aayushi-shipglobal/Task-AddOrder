@@ -3,7 +3,7 @@ import { CircleCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { updateShippingPartner } from "@/components/redux/addOrderSlice";
-import { fetchshippers } from "@/components/Api/ShipperApi";
+import { fetchshippers } from "@/components/Services/ShipperApi";
 
 function ShippingPartner() {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ function ShippingPartner() {
             name: rate.display_name,
             deliveryTime: rate.transit_time,
             price: rate.rate,
-          }))
+          })),
         );
       } catch (err) {
         console.error("Error fetching shipping options:", err);
@@ -115,7 +115,11 @@ function ShippingPartner() {
 }
 
 const WeightCard = ({ label, value, highlight = false }: { label: string; value: number; highlight?: boolean }) => (
-  <div className={`border ${highlight ? "border-orange-300 bg-yellow-100 text-orange-500" : "border-gray-300"} text-center px-4 py-2 min-w-32 rounded-md`}>
+  <div
+    className={`border ${
+      highlight ? "border-orange-300 bg-yellow-100 text-orange-500" : "border-gray-300"
+    } text-center px-4 py-2 min-w-32 rounded-md`}
+  >
     <p className="font-medium text-base">{value.toFixed(2)} KG</p>
     <p className="text-xs">{label}</p>
   </div>
@@ -147,7 +151,9 @@ const ShippingOptionsTable = ({
           <td className="border-t border-b pt-4">{provider.price}</td>
           <td className="border-t border-b pt-4 border-r rounded-r-md">
             <CircleCheck
-              className={`h-6 w-6 cursor-pointer transition-colors ${selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"}`}
+              className={`h-6 w-6 cursor-pointer transition-colors ${
+                selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
+              }`}
             />
           </td>
         </tr>

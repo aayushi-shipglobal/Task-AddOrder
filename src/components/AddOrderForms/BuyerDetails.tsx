@@ -4,8 +4,8 @@ import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import { FormComponent } from "../elements/FormComponent";
 import { useEffect, useState } from "react";
-import { CountryApi } from "../Api/CountryApi";
-import { StatesApi } from "../Api/StatesApi";
+import { CountryApi } from "../Services/CountryApi";
+import { StatesApi } from "../Services/StatesApi";
 import { Check } from "lucide-react";
 import { updateBuyerData, updateStep } from "../redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,23 +36,23 @@ export const BuyerDetails = () => {
   });
 
   useEffect(() => {
-    if (checked) {
-      form.setValue("address3", form.getValues("address1"));
-      form.setValue("address4", form.getValues("address2"));
-      form.setValue("mark", form.getValues("landmark"));
-      form.setValue("pincode1", form.getValues("pincode"));
-      form.setValue("city1", form.getValues("city"));
-      form.setValue("state1", form.getValues("state"));
-      form.setValue("Country", form.getValues("country"));
-    } else {
-      form.setValue("address3", "");
-      form.setValue("address4", "");
-      form.setValue("mark", "");
-      form.setValue("pincode1", "");
-      form.setValue("city1", "");
-      form.setValue("state1", "");
-      form.setValue("Country", "");
-    }
+    const addressFields = [
+      { shipping: "address1", billing: "address3" },
+      { shipping: "address2", billing: "address4" },
+      { shipping: "landmark", billing: "mark" },
+      { shipping: "pincode", billing: "pincode1" },
+      { shipping: "city", billing: "city1" },
+      { shipping: "state", billing: "state1" },
+      { shipping: "country", billing: "Country" },
+    ];
+    addressFields.forEach(({ shipping, billing }) => {
+      if (checked) {
+        const shippingValue = form.getValues(shipping);
+        form.setValue(billing, shippingValue);
+      } else {
+        form.setValue(billing, "");
+      }
+    });
   }, [checked, form]);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,9 +70,19 @@ export const BuyerDetails = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <p className="text-base font-bold mb-2">Personal Details</p>
           <div className="grid lg:grid-cols-3 gap-y-2 gap-x-4">
-            <FormComponent name="firstName" label="First Name" control={form.control} placeholder="Enter First Name..." />
+            <FormComponent
+              name="firstName"
+              label="First Name"
+              control={form.control}
+              placeholder="Enter First Name..."
+            />
             <FormComponent name="lastName" label="Last Name" control={form.control} placeholder="Enter Last Name..." />
-            <FormComponent name="mobileNo" label="Mobile No." control={form.control} placeholder="Enter Mobile Number..." />
+            <FormComponent
+              name="mobileNo"
+              label="Mobile No."
+              control={form.control}
+              placeholder="Enter Mobile Number..."
+            />
             <FormComponent name="email" label="Email Id" control={form.control} placeholder="Enter Email ID..." />
           </div>
 

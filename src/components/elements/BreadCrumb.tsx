@@ -12,15 +12,11 @@ function BreadCrumb() {
   return <Breadcrumb>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/">Add Order</BreadcrumbLink>
+      <BreadcrumbLink href="/">Orders</BreadcrumbLink>
     </BreadcrumbItem>
     <BreadcrumbSeparator />
     <BreadcrumbItem>
-      <BreadcrumbLink href="/components">Orders</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbPage>Add Order</BreadcrumbPage>
+      <BreadcrumbPage>Create CSB-IV Order</BreadcrumbPage>
     </BreadcrumbItem>
   </BreadcrumbList>
 </Breadcrumb>

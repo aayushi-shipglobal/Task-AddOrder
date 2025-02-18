@@ -1,4 +1,4 @@
-import AccordionComponent from "@/components/elements/AccordionComponent";
+import {AccordionComponent} from "@/components/elements/AccordionComponent";
 import BreadCrumb from "@/components/elements/BreadCrumb";
 import { ConsignorDetails } from "@/components/AddOrderForms/ConsigorDetails";
 import { BuyerDetails } from "@/components/AddOrderForms/BuyerDetails";
@@ -23,37 +23,37 @@ export const AddOrderForm = () => {
   const total = gst + shippingPartner.rate;
   const addOrderSteps = [
     {
-      title: "Consignor Details",
-      component: <ConsignorDetails />,
+      label: "Consignor Details",
+      content: <ConsignorDetails />,
     },
 
     {
-      title: "Consignee Details",
-      component: <BuyerDetails />,
+      label: "Consignee Details",
+      content: <BuyerDetails />,
     },
     {
-      title: "Shipment Information",
-      component: <OrderDetails />,
+      label: "Shipment Information",
+      content: <OrderDetails />,
     },
-    { title: "Select Shipping Partner", component: <ShippingPartner /> },
+    { label: "Select Shipping Partner", content: <ShippingPartner /> },
   ];
 
   return (
     <div>
       <div className="bg-gray-50 min-h-screen px-2 pt-6 pb-20 lg:px-12">
-        <p className="text-2xl mb-1 font-medium tracking-tight">Create CSB-IV Order</p>
+        <p className="text-2xl mb-1 font-medium">Create CSB-IV Order</p>
         <BreadCrumb />
         <div className="flex gap-3 mt-3">
           <div className="w-full -mt-3 rounded-md lg:w-2/3 flex flex-col">
-            {addOrderSteps.map((step, index) => (
+            {addOrderSteps.map((item, index) => (
               <AccordionComponent
                 key={index}
-                text={step.title}
+                text={item.label}
                 activeStep={activeStep}
                 isOpen={activeStep === index + 1}
                 setActiveStep={(step: number) => dispatch(updateStep(step))}
                 stepNumber={index + 1}
-                childElement={step.component}
+                content={item.content}
               />
             ))}
           </div>

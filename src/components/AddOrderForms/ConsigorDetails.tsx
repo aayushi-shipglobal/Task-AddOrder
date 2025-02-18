@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { RootState } from "@/store";
 import { consignorSchema } from "../schemas/ValidationSchemas";
-import { Button } from "react-day-picker";
+import { Button } from "../ui/button";
+import { Label } from "@radix-ui/react-label";
 
 export const ConsignorDetails = () => {
   const dispatch = useDispatch();
@@ -31,29 +32,27 @@ export const ConsignorDetails = () => {
     dispatch(updateStep(2));
   }
   return (
-    <div className="px-3 md:px-7 py-4">
+    <div className="px-3 md:px-8 py-4">
       <Form {...consignorForm}>
         <form onSubmit={consignorForm.handleSubmit(onSubmit)} className="mt-2 space-y-3">
-          <div className="space-y-1">
-            <label className="font-medium">Select Pickup address</label>
-            <div className="w-5/6">
-              {" "}
+          <div>
+            <Label className="font-normal">Search Customer</Label>
+            <div className="max-w-max overflow-hidden mt-3">
               <Select form={consignorForm} name="pickupAddress" />
             </div>
           </div>
           {consignorData && (
-            <div className="space-y-1 w-5/6">
+            <div className="ml-2">
               <p>{consignorData}</p>
             </div>
           )}
-
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="bg-blue-800 text-sm font-medium text-white rounded-md px-4 py-2 hover:bg-blue-800/90"
+              className="bg-blue-800 rounded-md text-sm px-4 py-2 font-medium text-white hover:bg-blue-800/95"
             >
               Continue
-            </button>
+            </Button>
           </div>
         </form>
       </Form>
