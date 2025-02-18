@@ -21,23 +21,23 @@ const formSchema = z.object({
   actualWeight: z
     .string()
     .min(1, "The package weight is required.")
-    .transform((val) => Number(val)),
+   ,
   length: z
     .string()
     .min(1, "The package length is required.")
-    .transform((val) => Number(val)),
+   ,
   breadth: z
     .string()
     .min(1, "The package breadth is required.")
-    .transform((val) => Number(val)),
+    ,
   height: z
     .string()
     .min(1, "The package height is required.")
-    .transform((val) => Number(val)),
+    ,
   invoiceNo: z
     .string()
     .min(2, "The invoice number is required.")
-    .transform((val) => Number(val)),
+   ,
   invoiceDate: z.string(),
   invoiceCurrency: z.string(),
   orderId: z.string(),
@@ -49,12 +49,12 @@ const formSchema = z.object({
       hsn: z.string().min(2, "HSN is required."),
       qty: z
         .string()
-        .min(2, "Product Qty is required.")
-        .transform((val) => Number(val)),
+        .min(1, "Product Qty is required.")
+        ,
       unitPrice: z
         .string()
-        .min(2, "Product Price is required.")
-        .transform((val) => Number(val)),
+        .min(1, "Product Price is required.")
+        ,
       igst: z.string(),
     }),
   ),
