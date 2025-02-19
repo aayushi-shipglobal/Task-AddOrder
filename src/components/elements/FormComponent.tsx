@@ -2,14 +2,14 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Required } from "./Required";
 
-type FormComponentProps = {
+export type FormComponentProps = {
   control: any;
   label: string;
   name: string;
   placeholder?: string;
 };
 
-export const FormComponent = ({ control, label, name, placeholder }: FormComponentProps) => {
+export const FormComponent = ({ control, label, name}: FormComponentProps) => {
   return (
     <div>
       <FormField
@@ -22,7 +22,7 @@ export const FormComponent = ({ control, label, name, placeholder }: FormCompone
               {(name !== "landmark" && name !== "mark") && <Required/>}{" "}
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder={placeholder} />
+              <Input {...field} placeholder={`Enter ${label}...`} />
             </FormControl>
             <FormMessage className="font-normal text-xs" />
           </FormItem>

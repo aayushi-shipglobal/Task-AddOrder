@@ -23,7 +23,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   label,
   date,
   setDate,
-  placeholder = "Pick a Date",
+ 
 }) => {
   return (
     <FormItem>

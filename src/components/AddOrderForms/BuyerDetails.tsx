@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { updateChecked } from "../redux/addOrderSlice";
 import { Form } from "@/components/ui/form";
-import { FormComponent } from "../elements/FormComponent";
 import { useEffect } from "react";
 import { Check } from "lucide-react";
 import { updateBuyerDetails, updateStep } from "../redux/addOrderSlice";
@@ -12,6 +11,7 @@ import { RootState } from "@/store";
 import { buyerSchema } from "../schemas/ValidationSchemas";
 import { ButtonComp } from "../elements/ButtonComp";
 import { AddressForm } from "../elements/AddressForm";
+import { EnhancedFormComponent } from "../elements/EnhancedFormComponent";
 
 export const BuyerDetails = () => {
   const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
@@ -58,20 +58,10 @@ export const BuyerDetails = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <p className="text-base font-bold mb-2">Personal Details</p>
           <div className="grid lg:grid-cols-3 gap-y-2 gap-x-4">
-            <FormComponent
-              name="firstName"
-              label="First Name"
-              control={form.control}
-              placeholder="Enter First Name..."
-            />
-            <FormComponent name="lastName" label="Last Name" control={form.control} placeholder="Enter Last Name..." />
-            <FormComponent
-              name="mobileNo"
-              label="Mobile No."
-              control={form.control}
-              placeholder="Enter Mobile Number..."
-            />
-            <FormComponent name="email" label="Email Id" control={form.control} placeholder="Enter Email ID..." />
+            <EnhancedFormComponent name="firstName" label="First Name" control={form.control}  />
+            <EnhancedFormComponent name="lastName" label="Last Name" control={form.control} />
+            <EnhancedFormComponent name="mobileNo" label="Mobile No." control={form.control} />
+            <EnhancedFormComponent name="email" label="Email Id" control={form.control} />
           </div>
 
           <p className="text-base font-bold mb-2 mt-6">Shipping Address</p>

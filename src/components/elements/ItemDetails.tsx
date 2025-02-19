@@ -106,7 +106,7 @@ const ItemDetails = ({ form, errorMessage }) => {
               igst: "0",
             })
           }
-          className="flex bg-white border-0 shadow-none text-sm max-w-max items-center gap-2"
+          className="flex bg-white border-0 shadow-none text-sm max-w-max items-center gap-2 hover:bg-white"
         >
           <Plus className="w-4 h-4 text-blue-800" />
           <span className="text-blue-800 underline font-medium">Add Another Product</span>

@@ -95,7 +95,7 @@ export const OrderDetails = () => {
               label="Invoice Date"
               date={date}
               setDate={setDate}
-              placeholder="Select Invoice Date"
+             
             />
 
             <CurrencySelect

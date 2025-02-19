@@ -56,7 +56,6 @@ export const fetchShippers = async (payload: any) => {
       body: JSON.stringify(payload),
     });
     const result = await response.json();
-    console.log(result);
     return result?.data?.rate || [];
   } catch (error) {
     console.error("Error fetching shipper rates:", error);
