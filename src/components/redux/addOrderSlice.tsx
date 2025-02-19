@@ -55,10 +55,10 @@ const addOrderSlice = createSlice({
     updatePickupAddress: (state, action) => {
       state.pickupAddress = action.payload;
     },
-    updateBuyerData: (state, action) => {
+    updateBuyerDetails: (state, action) => {
       state.buyerDetailsData = { ...state.buyerDetailsData, ...action.payload };
     },
-    updateOrderData: (state, action) => {
+    updateOrderDetails: (state, action) => {
       state.orderDetailsData = { ...state.orderDetailsData, ...action.payload };
     },
     updateStep: (state, action) => {
@@ -68,13 +68,13 @@ const addOrderSlice = createSlice({
       state.shippingPartner = action.payload;
     },
 
-    addItemToOrder: (state, action) => {
+    setItemToOrder: (state, action) => {
       state.orderDetailsData.items.push(action.payload);
     },
-    removeItemFromOrder: (state, action) => {
+    removeItem: (state, action) => {
       state.orderDetailsData.items = state.orderDetailsData.items.filter((_, index) => index !== action.payload);
     },
-    updateItemInOrder: (state, action) => {
+    updateItem: (state, action) => {
       const { index, itemData } = action.payload;
       state.orderDetailsData.items[index] = { ...state.orderDetailsData.items[index], ...itemData };
     },
@@ -85,14 +85,14 @@ const addOrderSlice = createSlice({
 });
 
 export const {
-  updateBuyerData,
-  updateOrderData,
+  updateBuyerDetails,
+  updateOrderDetails,
   updateStep,
   updateShippingPartner,
   updatePickupAddress,
-  addItemToOrder,
-  removeItemFromOrder,
-  updateItemInOrder,
+  setItemToOrder,
+  removeItem,
+  updateItem,
   updateChecked
 } = addOrderSlice.actions;
 

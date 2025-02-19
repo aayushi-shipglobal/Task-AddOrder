@@ -34,7 +34,7 @@ const ItemDetails = ({ form, errorMessage }) => {
     return accum + (item.qty || 0) * (item.unitPrice || 0);
   }, 0);
 
-  const renderFormField = (itemField: string, field: any, index: number) => (
+  const renderFormField = (itemField: string, index: number) => (
     <FormField
       key={itemField}
       control={form.control}
@@ -49,7 +49,6 @@ const ItemDetails = ({ form, errorMessage }) => {
             <Input
               placeholder={placeholderTexts[itemField]}
               {...field}
-              type={itemField === "qty" || itemField === "unitPrice" ? "number" : "text"}
             />
           </FormControl>
           <FormMessage />
@@ -58,10 +57,10 @@ const ItemDetails = ({ form, errorMessage }) => {
     />
   );
 
-  const renderIGSTField = (field: any, index: number) => (
+  const renderIGSTField = (index: number) => (
     <FormField
       control={form.control}
-      name={`items.${index}.igst` as const}
+      name={`items.${index}.igst`}
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-normal">
@@ -89,7 +88,7 @@ const ItemDetails = ({ form, errorMessage }) => {
         <div key={field.id} className="lg:flex items-center gap-x-1">
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-1 mt-2">
             {Object.keys(itemFields).map((itemField) => renderFormField(itemField, field, index))}
-            {renderIGSTField(field, index)}
+            {renderIGSTField(index)}
           </div>
           {index > 0 && (
             <Trash2

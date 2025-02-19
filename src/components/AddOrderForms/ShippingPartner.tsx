@@ -52,7 +52,10 @@ function ShippingPartner() {
   }, [currentStep, buyerInformation, orderDetails]);
 
   const handleShippingProviderSelection = (provider: any) => {
-    dispatch(updateShippingPartner(provider));
+    dispatch(updateShippingPartner({
+      name:provider.name,
+      rate:provider.price,
+    }));
   };
 
   const handleSubmit = () => {
@@ -63,8 +66,8 @@ function ShippingPartner() {
   return (
     <div className="px-3 md:px-7 py-4">
       <p>
-        All shipments via ShipGlobal services are <strong>Delivered Duty Paid (DDP)</strong>, hence{" "}
-        <strong>no extra duty</strong> will be billed on the consignee or the shipper. Rates are inclusive of covid &
+        All shipments via ShipGlobal services are <span className="font-bold">Delivered Duty Paid (DDP)</span>, hence
+        <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are inclusive of covid &
         fuel surcharge, exclusive of GST and ex-Delhi Hub.
       </p>
 

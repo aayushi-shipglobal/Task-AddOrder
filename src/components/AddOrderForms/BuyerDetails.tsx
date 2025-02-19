@@ -8,7 +8,7 @@ import { useEffect} from "react";
 import { CountryApi } from "../services/CountryApi";
 import { StatesApi } from "../services/StatesApi";
 import { Check } from "lucide-react";
-import { updateBuyerData, updateStep } from "../redux/addOrderSlice";
+import { updateBuyerDetails, updateStep } from "../redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { buyerSchema } from "../schemas/ValidationSchemas";
@@ -61,7 +61,7 @@ export const BuyerDetails = () => {
   };
 
   const onSubmit = (values: z.infer<typeof buyerSchema>) => {
-    dispatch(updateBuyerData(values));
+    dispatch(updateBuyerDetails(values));
     dispatch(updateStep(3));
   };
 

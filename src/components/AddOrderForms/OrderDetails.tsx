@@ -5,7 +5,7 @@ import { Form } from "@/components/ui/form";
 import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
 import { OrderFormComponent } from "../elements/OrderFormComponent";
 import * as React from "react";
-import { updateOrderData, updateStep } from "../redux/addOrderSlice";
+import { updateOrderDetails, updateStep } from "../redux/addOrderSlice";
 import { Button } from "@/components/ui/button";
 import ItemDetails from "../elements/ItemDetails";
 import { useDispatch, useSelector } from "react-redux";
@@ -74,7 +74,7 @@ export const OrderDetails = () => {
     if (!isValid) {
       return;
     }
-    dispatch(updateOrderData(values));
+    dispatch(updateOrderDetails(values));
     dispatch(updateStep(4));
   };
 

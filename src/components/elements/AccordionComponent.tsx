@@ -45,7 +45,7 @@ export const AccordionComponent = ({
 
         {isStepCompleted && (
           <button
-            className="text-blue-800 underline text-sm mr-8 font-semibold"
+            className="text-blue-800 underline text-sm mr-8 font-medium"
             onClick={() => setActiveStep(stepNumber)}
           >
             Change
