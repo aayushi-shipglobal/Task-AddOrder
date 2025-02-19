@@ -1,9 +1,9 @@
-import { AddOrderForm } from "./Layout/AddOrderForm";
+import { AddOrderLayout} from "./Layout/AddOrderLayout";
 
 function App() {
   return (
     <div className="bg-gray-200 font-poppins">
-      <AddOrderForm />
+      <AddOrderLayout />
     </div>
   );
 }

@@ -10,9 +10,10 @@ import { QuickTips } from "@/components/elements/QuickTips";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { updateStep } from "@/components/redux/addOrderSlice";
 
-export const AddOrderForm = () => {
+export const AddOrderLayout = () => {
   const PickupAddress = useSelector((state: RootState) => state.addOrder.pickupAddress);
   const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
+  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
   const shippingPartner = useSelector((state: RootState) => state.addOrder.shippingPartner);
   const activeStep = useSelector((state: RootState) => state.addOrder.step);
   const dispatch = useDispatch();
@@ -64,11 +65,11 @@ export const AddOrderForm = () => {
               {activeStep > 1 && (
                 <Accordion type="single" collapsible>
                   <AccordionItem value="address">
-                    <AccordionTrigger className="font-bold text-base">Consignor Details</AccordionTrigger>
+                    <AccordionTrigger className="font-semibold text-base">Consignor Details</AccordionTrigger>
                     <AccordionContent>
                       <div>
                         <p className="text-gray-500">Address</p>
-                        <p className="text-sm mt-3 font-normal">{PickupAddress}</p>
+                        <p className="text-sm mt-3 font-normal">{PickupAddress.toLocaleUpperCase()}</p>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -77,23 +78,34 @@ export const AddOrderForm = () => {
               {activeStep > 2 && (
                 <Accordion type="single" collapsible>
                   <AccordionItem value="address">
-                    <AccordionTrigger className="font-bold text-base">Consignee Details</AccordionTrigger>
+                    <AccordionTrigger className="font-semibold text-base border-t ">Consignee Details</AccordionTrigger>
                     <AccordionContent>
                       <div className="mt-3">
                         <div className="mb-4">
                           {" "}
                           <p className="text-gray-500">Name</p>
-                          <p className="text-sm font-normal">
+                          <p className="text-sm font-medium">
                             {buyerData.firstName} {buyerData.lastName} | {buyerData.mobileNo}
                           </p>
                         </div>
                         <div className="mt-3">
                           {" "}
                           <p className="text-gray-500">Billing Address</p>
-                          <p className="text-sm font-normal">Same as shipping Address</p>
+                          {checked ? (
+                            <p className="text-sm font-normal">Same as shipping Address</p>
+                          ) : (
+                            <p className="text-sm font-normal mt-1">
+                              {buyerData.address3}
+                              {buyerData.address4}
+                              {buyerData.city1}
+                              {buyerData.state1}
+                              {buyerData.Country}
+                              {buyerData.pincode1}
+                            </p>
+                          )}
                         </div>
                         <div className="mt-3">
-                          <p className="text-gray-500">Shipping Address</p>
+                          <p className="text-gray-500 mb-1">Shipping Address</p>
                           <p className="text-sm  font-normal">
                             {buyerData.address1}
                             {buyerData.address2}

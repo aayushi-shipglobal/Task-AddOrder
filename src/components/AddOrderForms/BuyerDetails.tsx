@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { updateChecked } from "../redux/addOrderSlice";
 import { Form } from "@/components/ui/form";
 import { FormComponent } from "../elements/FormComponent";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { CountryApi } from "../services/CountryApi";
 import { StatesApi } from "../services/StatesApi";
 import { Check } from "lucide-react";
@@ -26,7 +27,7 @@ const AddressForm = ({ form, isBillingAddress = false }) => (
 );
 
 export const BuyerDetails = () => {
-  const [checked, setChecked] = useState(true);
+  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked); 
   const dispatch = useDispatch();
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
@@ -56,7 +57,7 @@ export const BuyerDetails = () => {
   }, [checked, form]);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(e.target.checked);
+    dispatch(updateChecked(e.target.checked));
   };
 
   const onSubmit = (values: z.infer<typeof buyerSchema>) => {
@@ -91,8 +92,7 @@ export const BuyerDetails = () => {
 
           <div
             className="flex items-center my-6 cursor-pointer lg:w-1/2"
-            onClick={() => setChecked((prev) => !prev)}
-            onChange={handleCheckboxChange}
+            onClick={() => handleCheckboxChange({ target: { checked: !checked } } as React.ChangeEvent<HTMLInputElement>)}
           >
             <div
               className={`w-5 h-5 border border-gray-100 flex items-center justify-center rounded-md ${

@@ -20,6 +20,7 @@ const initialState = {
     Country:"",
     state1: "",
     mark: "",
+    checked:true,
   },
   orderDetailsData: {
     actualWeight: "",
@@ -77,6 +78,9 @@ const addOrderSlice = createSlice({
       const { index, itemData } = action.payload;
       state.orderDetailsData.items[index] = { ...state.orderDetailsData.items[index], ...itemData };
     },
+    updateChecked: (state, action) => {
+      state.buyerDetailsData.checked = action.payload;
+    }
   },
 });
 
@@ -89,6 +93,7 @@ export const {
   addItemToOrder,
   removeItemFromOrder,
   updateItemInOrder,
+  updateChecked
 } = addOrderSlice.actions;
 
 export default addOrderSlice.reducer;

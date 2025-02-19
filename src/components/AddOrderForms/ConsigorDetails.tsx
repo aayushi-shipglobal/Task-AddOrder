@@ -42,7 +42,7 @@ export const ConsignorDetails = () => {
             </div>
           </div>
           {consignorData && (
-            <div className="ml-2">
+            <div className="ml-2 text-sm">
               <p>{consignorData}</p>
             </div>
           )}
