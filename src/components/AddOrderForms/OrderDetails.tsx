@@ -11,7 +11,7 @@ import ItemDetails from "../elements/ItemDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { orderSchema } from "../schemas/ValidationSchemas";
-import { validateOrderInvoice } from "../services/AmountApi";
+import { validateOrderInvoice } from "../services/Services";
 import { useEffect } from "react";
 import DatePicker from "../elements/DatePicker";
 import CurrencySelect from "../elements/CurrencySelect";

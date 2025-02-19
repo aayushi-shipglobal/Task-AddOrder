@@ -3,7 +3,8 @@ import { CircleCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { updateShippingPartner } from "@/components/redux/addOrderSlice";
-import { fetchshippers } from "@/components/services/ShipperApi";
+import { fetchShippers } from "@/components/services/Services";
+import { ErrorMessage } from "../elements/ErrorMessage";
 
 function ShippingPartner() {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ function ShippingPartner() {
     const fetchRates = async () => {
       setIsLoading(true);
       try {
-        const rates = await fetchshippers(requestPayload);
+        const rates = await fetchShippers(requestPayload);
         setAvailableShippingOptions(
           rates.map((rate: any) => ({
             name: rate.display_name,
@@ -52,10 +53,12 @@ function ShippingPartner() {
   }, [currentStep, buyerInformation, orderDetails]);
 
   const handleShippingProviderSelection = (provider: any) => {
-    dispatch(updateShippingPartner({
-      name:provider.name,
-      rate:provider.price,
-    }));
+    dispatch(
+      updateShippingPartner({
+        name: provider.name,
+        rate: provider.price,
+      }),
+    );
   };
 
   const handleSubmit = () => {
@@ -67,8 +70,8 @@ function ShippingPartner() {
     <div className="px-3 md:px-7 py-4 text-sm">
       <p>
         All shipments via ShipGlobal services are <span className="font-bold">Delivered Duty Paid (DDP)</span>, hence
-        <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are inclusive of covid &
-        fuel surcharge, exclusive of GST and ex-Delhi Hub.
+        <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are
+        inclusive of covid & fuel surcharge, exclusive of GST and ex-Delhi Hub.
       </p>
 
       <p>
@@ -86,7 +89,7 @@ function ShippingPartner() {
       </div>
 
       {isLoading && <p className="text-center mt-5">Loading available shipping options...</p>}
-      {apiError && <p className="text-center text-red-500 mt-5">{apiError}</p>}
+      {apiError && <ErrorMessage apiError={apiError} />}
 
       {availableShippingOptions.length > 0 && (
         <>

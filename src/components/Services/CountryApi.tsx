@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { fetchCountry } from "./Services";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ComboboxDemo } from "../elements/ComboboxDemo";
 
@@ -11,24 +12,20 @@ export function CountryApi({ control, name }: Props) {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    async function fetchCountries() {
+    const loadCountries = async () => {
       try {
-        const response = await fetch("https://api.fr.stg.shipglobal.in/api/v1/location/countries");
-        const result = await response.json();
-        if (result.data && result.data.countries) {
-          const formattedCountries = result.data.countries.map((country: any) => ({
-            value: country.country_iso2,
-            label: country.country_display,
-          }));
-          setCountries(formattedCountries);
-        }
+        setLoading(true);
+
+        const fetchedCountries = await fetchCountry();
+        setCountries(fetchedCountries);
       } catch (error) {
         console.error("Error fetching countries:", error);
       } finally {
         setLoading(false);
       }
-    }
-    fetchCountries();
+    };
+
+    loadCountries();
   }, []);
   return (
     <FormField
