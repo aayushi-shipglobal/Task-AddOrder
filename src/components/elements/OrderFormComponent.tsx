@@ -1,5 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Required } from "./Required";
 
 type OrderFormComponentProps={
     name:string;
@@ -17,7 +18,7 @@ export const OrderFormComponent = ({name,control,label,placeholder}:OrderFormCom
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="mb-1 text-black">
-                  {label}<span className="text-red-500">*</span>
+                  {label}<Required/>
                 </FormLabel>
                 <FormControl>
                   <div className="flex flex-row border border-gray-300 rounded">

@@ -4,6 +4,7 @@ import { useFieldArray } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { Required } from "./Required";
 
 const ItemDetails = ({ form, errorMessage }) => {
   const { fields, append, remove } = useFieldArray({
@@ -22,14 +23,6 @@ const ItemDetails = ({ form, errorMessage }) => {
     unitPrice: `Unit Price (${currency})`,
   };
 
-  const placeholderTexts: Record<string, string> = {
-    productName: "Enter Product Name...",
-    sku: "Enter SKU...",
-    hsn: "Enter HSN...",
-    qty: "Enter Quantity...",
-    unitPrice: "Enter Unit Price...",
-  };
-
   const calculateTotalPrice = items.reduce((accum: number, item: { qty: number; unitPrice: number }) => {
     return accum + (item.qty || 0) * (item.unitPrice || 0);
   }, 0);
@@ -38,16 +31,16 @@ const ItemDetails = ({ form, errorMessage }) => {
     <FormField
       key={itemField}
       control={form.control}
-      name={`items.${index}.${itemField}` as const}
+      name={`items.${index}.${itemField}`}
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-normal">
             {itemFields[itemField]}
-            {itemField !== "sku" && <span className="text-red-500 ml-1">*</span>}
+            {itemField !== "sku" && <Required/>}
           </FormLabel>
           <FormControl>
             <Input
-              placeholder={placeholderTexts[itemField]}
+              placeholder={`Enter ${itemFields[itemField]}...`}
               {...field}
             />
           </FormControl>
@@ -64,7 +57,7 @@ const ItemDetails = ({ form, errorMessage }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-normal">
-            IGST <span className="text-red-500">*</span>
+            IGST <Required/>
           </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={true}>
             <FormControl>
@@ -87,7 +80,7 @@ const ItemDetails = ({ form, errorMessage }) => {
       {fields.map((field, index) => (
         <div key={field.id} className="lg:flex items-center gap-x-1">
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-1 mt-2">
-            {Object.keys(itemFields).map((itemField) => renderFormField(itemField, field, index))}
+            {Object.keys(itemFields).map((itemField) => renderFormField(itemField, index))}
             {renderIGSTField(index)}
           </div>
           {index > 0 && (

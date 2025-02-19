@@ -4,30 +4,17 @@ import { z } from "zod";
 import { updateChecked } from "../redux/addOrderSlice";
 import { Form } from "@/components/ui/form";
 import { FormComponent } from "../elements/FormComponent";
-import { useEffect} from "react";
-import { CountryApi } from "../services/CountryApi";
-import { StatesApi } from "../services/StatesApi";
+import { useEffect } from "react";
 import { Check } from "lucide-react";
 import { updateBuyerDetails, updateStep } from "../redux/addOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { buyerSchema } from "../schemas/ValidationSchemas";
-import { Button } from "../ui/button";
-
-const AddressForm = ({ form, isBillingAddress = false }) => (
-  <div className="grid lg:grid-cols-3 gap-y-2 gap-x-4">
-    <FormComponent name={isBillingAddress ? "address3" : "address1"} label="Address 1" control={form.control} />
-    <FormComponent name={isBillingAddress ? "address4" : "address2"} label="Address 2" control={form.control} />
-    <FormComponent name={isBillingAddress ? "mark" : "landmark"} label="Landmark" control={form.control} />
-    <CountryApi name={isBillingAddress ? "Country" : "country"} control={form.control} />
-    <StatesApi name={isBillingAddress ? "state1" : "state"} form={form} />
-    <FormComponent name={isBillingAddress ? "city1" : "city"} label="City" control={form.control} />
-    <FormComponent name={isBillingAddress ? "pincode1" : "pincode"} label="Pincode" control={form.control} />
-  </div>
-);
+import { ButtonComp } from "../elements/ButtonComp";
+import { AddressForm } from "../elements/AddressForm";
 
 export const BuyerDetails = () => {
-  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked); 
+  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
   const dispatch = useDispatch();
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
@@ -92,7 +79,7 @@ export const BuyerDetails = () => {
 
           <div
             className="flex items-center my-6 cursor-pointer lg:w-1/2"
-            onClick={() => handleCheckboxChange({ target: { checked: !checked } } as React.ChangeEvent<HTMLInputElement>)}
+            onClick={() => handleCheckboxChange({ target: { checked: !checked } })}
           >
             <div
               className={`w-5 h-5 border border-gray-100 flex items-center justify-center rounded-md ${
@@ -111,14 +98,7 @@ export const BuyerDetails = () => {
             </div>
           )}
 
-          <div className="flex justify-end mt-6">
-            <Button
-              type="submit"
-              className="bg-blue-800 text-sm font-medium text-white rounded-md px-4 py-2 hover:bg-blue-800/90"
-            >
-              Continue
-            </Button>
-          </div>
+          <ButtonComp />
         </form>
       </Form>
     </div>

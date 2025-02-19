@@ -1,10 +1,13 @@
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
+import {AddressComponent} from "../helpers/AddressComponent"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
 export const ConsigneeInformation = () => {
-    const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
-    const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
+  const { formattedShippingAddress, formattedBillingAddress } = AddressComponent();
+  const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
+  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
+
 
   return (
     <div>
@@ -27,24 +30,14 @@ export const ConsigneeInformation = () => {
                   <p className="text-sm font-normal">Same as shipping Address</p>
                 ) : (
                   <p className="text-sm font-normal mt-1">
-                    {buyerData.address3}
-                    {buyerData.address4}
-                    {buyerData.city1}
-                    {buyerData.state1}
-                    {buyerData.Country}
-                    {buyerData.pincode1}
+                    {formattedBillingAddress}
                   </p>
                 )}
               </div>
               <div className="mt-3">
                 <p className="text-gray-500 mb-1">Shipping Address</p>
                 <p className="text-sm  font-normal">
-                  {buyerData.address1}
-                  {buyerData.address2}
-                  {buyerData.city}
-                  {buyerData.state}
-                  {buyerData.country}
-                  {buyerData.pincode}
+                  {formattedShippingAddress}
                 </p>
               </div>
             </div>

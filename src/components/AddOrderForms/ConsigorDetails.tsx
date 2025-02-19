@@ -1,15 +1,15 @@
-import { Form } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Select } from "../elements/Select";
-import { updatePickupAddress, updateStep } from "../redux/addOrderSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { RootState } from "@/store";
-import { consignorSchema } from "../schemas/ValidationSchemas";
-import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { Select } from "../elements/Select";
+import { Form } from "@/components/ui/form";
 import { Label } from "@radix-ui/react-label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
+import { consignorSchema } from "../schemas/ValidationSchemas";
+import { updatePickupAddress, updateStep } from "../redux/addOrderSlice";
+import { ButtonComp } from "../elements/ButtonComp";
 
 export const ConsignorDetails = () => {
   const dispatch = useDispatch();
@@ -46,14 +46,7 @@ export const ConsignorDetails = () => {
               <p>{consignorData}</p>
             </div>
           )}
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              className="bg-blue-800 rounded-md text-sm px-4 py-2 font-medium text-white hover:bg-blue-800/95"
-            >
-              Continue
-            </Button>
-          </div>
+          <ButtonComp />
         </form>
       </Form>
     </div>

@@ -64,7 +64,7 @@ function ShippingPartner() {
   };
 
   return (
-    <div className="px-3 md:px-7 py-4">
+    <div className="px-3 md:px-7 py-4 text-sm">
       <p>
         All shipments via ShipGlobal services are <span className="font-bold">Delivered Duty Paid (DDP)</span>, hence
         <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are inclusive of covid &
@@ -76,10 +76,10 @@ function ShippingPartner() {
       </p>
 
       <div className="flex flex-col md:flex-row items-center gap-2 justify-center px-10 md:px-32 mt-5">
-        <WeightCard label="Dead weight" value={Number(orderDetails.actualWeight)} />
-        <WeightCard label="Volumetric weight" value={volumetricWeight} />
+        <WeightCard label="Dead Weight" value={Number(orderDetails.actualWeight)} />
+        <WeightCard label="Volumetric Weight" value={volumetricWeight} />
         <WeightCard
-          label="Billed weight"
+          label="Billed Weight"
           value={Math.max(Number(orderDetails.actualWeight), volumetricWeight)}
           highlight
         />
@@ -120,11 +120,11 @@ function ShippingPartner() {
 const WeightCard = ({ label, value, highlight = false }: { label: string; value: number; highlight?: boolean }) => (
   <div
     className={`border ${
-      highlight ? "border-orange-300 bg-yellow-100 text-orange-500" : "border-gray-300"
+      highlight ? "border-orange-300 bg-orange-50 text-orange-400" : "border-gray-300 bg-gray-100 text-gray-500"
     } text-center px-4 py-2 min-w-32 rounded-md`}
   >
     <p className="font-medium text-base">{value.toFixed(2)} KG</p>
-    <p className="text-xs">{label}</p>
+    <p className="text-xs font-medium ">{label}</p>
   </div>
 );
 
@@ -140,10 +140,10 @@ const ShippingOptionsTable = ({
   <table className="mt-5 w-full relative text-xs lg:text-sm border-separate border-spacing-y-2.5">
     <thead>
       <tr className="text-left text-slate-500 bg-slate-50">
-        <th className="p-4 border-t border-b border-l rounded-l-md">Shipping Provider</th>
-        <th className="border-t border-b">Delivery Time</th>
-        <th className="border-t border-b">Shipment Price</th>
-        <th className="border-t border-b border-r rounded-r-md pr-2">Select</th>
+        <th className="p-4 border-t border-b border-l rounded-l-md font-normal">Courier Partner</th>
+        <th className="border-t border-b font-normal">Delivery Time</th>
+        <th className="border-t border-b font-normal">Shipment Rate</th>
+        <th className="border-t border-b border-r rounded-r-md pr-2 font-normal">Select</th>
       </tr>
     </thead>
     <tbody>

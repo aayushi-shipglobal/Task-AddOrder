@@ -1,5 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Required } from "./Required";
 
 type FormComponentProps = {
   control: any;
@@ -18,7 +19,7 @@ export const FormComponent = ({ control, label, name, placeholder }: FormCompone
           <FormItem>
             <FormLabel className="text-gray-700">
               {label}
-              {(name !== "landmark" && name !== "mark") && <span className="text-red-500">*</span>}{" "}
+              {(name !== "landmark" && name !== "mark") && <Required/>}{" "}
             </FormLabel>
             <FormControl>
               <Input {...field} placeholder={placeholder} />
