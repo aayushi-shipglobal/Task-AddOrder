@@ -3,17 +3,17 @@ import { Input } from "@/components/ui/input";
 import { Required } from "./Required";
 
 export type FormComponentProps = {
-  control: any;
+  form: any;
   label: string;
   name: string;
   placeholder?: string;
 };
 
-export const FormComponent = ({ control, label, name}: FormComponentProps) => {
+export const FormComponent = ({ form, label, name}: FormComponentProps) => {
   return (
     <div>
       <FormField
-        control={control}
+        control={form.control}
         name={name}
         render={({ field }) => (
           <FormItem>

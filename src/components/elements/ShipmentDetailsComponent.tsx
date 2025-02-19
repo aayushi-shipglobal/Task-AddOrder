@@ -7,7 +7,6 @@ type ShipmentDetailsComponentProps = {
   name: string;
   label: string;
   unit: string;
-  placeholder?: string;
 };
 
 export const ShipmentDetailsComponent = ({
@@ -15,7 +14,6 @@ export const ShipmentDetailsComponent = ({
   name,
   label,
   unit,
-  placeholder,
 }: ShipmentDetailsComponentProps) => {
   return (
     <div>
@@ -33,7 +31,7 @@ export const ShipmentDetailsComponent = ({
                 <Input
                   {...field}
                   className="border-none shadow-none h-10 focus-visible:ring-0"
-                  placeholder={placeholder}
+                  placeholder={`Enter ${label}...`} 
                 />
                 <span className=" px-3 py-2 border-l border-gray-300  bg-gray-200">{unit}</span>
               </div>

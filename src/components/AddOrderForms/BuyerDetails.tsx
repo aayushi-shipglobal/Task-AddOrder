@@ -11,7 +11,8 @@ import { RootState } from "@/store";
 import { buyerSchema } from "../schemas/ValidationSchemas";
 import { ButtonComp } from "../elements/ButtonComp";
 import { AddressForm } from "../elements/AddressForm";
-import { EnhancedFormComponent } from "../elements/EnhancedFormComponent";
+import { BuyerComponent } from "../elements/BuyerComponent";
+
 
 export const BuyerDetails = () => {
   const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
@@ -22,6 +23,8 @@ export const BuyerDetails = () => {
     resolver: zodResolver(buyerSchema),
     defaultValues: buyerDetails,
   });
+
+  
 
   useEffect(() => {
     const addressFields = [
@@ -57,12 +60,7 @@ export const BuyerDetails = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <p className="text-base font-bold mb-2">Personal Details</p>
-          <div className="grid lg:grid-cols-3 gap-y-2 gap-x-4">
-            <EnhancedFormComponent name="firstName" label="First Name" control={form.control}  />
-            <EnhancedFormComponent name="lastName" label="Last Name" control={form.control} />
-            <EnhancedFormComponent name="mobileNo" label="Mobile No." control={form.control} />
-            <EnhancedFormComponent name="email" label="Email Id" control={form.control} />
-          </div>
+         <BuyerComponent form={form}/>
 
           <p className="text-base font-bold mb-2 mt-6">Shipping Address</p>
           <AddressForm form={form} />
