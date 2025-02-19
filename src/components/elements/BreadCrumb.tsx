@@ -8,15 +8,19 @@ import {
     BreadcrumbSeparator,
   } from "../ui/breadcrumb";
 
-function BreadCrumb() {
+type BreadcrumbProps = {
+  link:string;
+  page:string;
+}
+function BreadCrumb({link,page}:BreadcrumbProps) {
   return <Breadcrumb>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/">Orders</BreadcrumbLink>
+      <BreadcrumbLink href="/">{link}</BreadcrumbLink>
     </BreadcrumbItem>
     <BreadcrumbSeparator />
     <BreadcrumbItem>
-      <BreadcrumbPage>Create CSB-IV Order</BreadcrumbPage>
+      <BreadcrumbPage>{page}</BreadcrumbPage>
     </BreadcrumbItem>
   </BreadcrumbList>
 </Breadcrumb>

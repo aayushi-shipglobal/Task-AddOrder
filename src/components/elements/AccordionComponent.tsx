@@ -35,7 +35,7 @@ export const AccordionComponent = ({
         <div className={`flex items-center gap-x-2 px-2 lg:px-4 text-sm font-medium ${textColor}`}>
           <div className={`text-center w-6 h-6 py-0.5 rounded-sm ${stepStyles}`}>
             {isStepCompleted ? (
-              <Check className="text-white size-5 pt-0.5 pl-1" />
+              <Check className="text-white size-5 pt-1 pl-1" />
             ) : (
               stepNumber
             )}

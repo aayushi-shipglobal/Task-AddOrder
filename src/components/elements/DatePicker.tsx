@@ -17,7 +17,14 @@ interface DatePickerProps {
   placeholder?: string;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ control, name, label, date, setDate, placeholder = "Pick a Date" }) => {
+const DatePicker: React.FC<DatePickerProps> = ({
+  control,
+  name,
+  label,
+  date,
+  setDate,
+  placeholder = "Pick a Date",
+}) => {
   return (
     <FormItem>
       <FormLabel>
@@ -34,12 +41,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ control, name, label, date, set
                   variant="outline"
                   className={cn(
                     "lg:w-[240px] w-[700px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    !date && "text-muted-foreground",
                   )}
-                  placeholder={placeholder}
                 >
-                  <CalendarIcon />
-                  {date ? format(date, "PPP") : ""}
+                  <span className="flex-grow">{date ? format(date, "PPP") : "Pick a Date"}</span>
+                  <CalendarIcon className="ml-auto" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">

@@ -1,11 +1,11 @@
-import {AccordionComponent} from "@/components/elements/AccordionComponent";
+import { AccordionComponent } from "@/components/elements/AccordionComponent";
 import BreadCrumb from "@/components/elements/BreadCrumb";
-import { ConsignorDetails } from "@/components/AddOrderForms/ConsigorDetails";
-import { BuyerDetails } from "@/components/AddOrderForms/BuyerDetails";
-import { OrderDetails } from "@/components/AddOrderForms/OrderDetails";
+import { ConsignorDetails } from "@/components/addOrderForms/ConsigorDetails";
+import { BuyerDetails } from "@/components/addOrderForms/BuyerDetails";
+import { OrderDetails } from "@/components/addOrderForms/OrderDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import ShippingPartner from "@/components/AddOrderForms/ShippingPartner";
+import ShippingPartner from "@/components/addOrderForms/ShippingPartner";
 import { QuickTips } from "@/components/elements/QuickTips";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { updateStep } from "@/components/redux/addOrderSlice";
@@ -42,7 +42,7 @@ export const AddOrderForm = () => {
     <div>
       <div className="bg-gray-50 min-h-screen px-2 pt-6 pb-20 lg:px-12">
         <p className="text-2xl mb-1 font-medium">Create CSB-IV Order</p>
-        <BreadCrumb />
+        <BreadCrumb link="Orders" page="Create CSB-IV Order" />
         <div className="flex gap-3 mt-3">
           <div className="w-full -mt-3 rounded-md lg:w-2/3 flex flex-col">
             {addOrderSteps.map((item, index) => (
@@ -67,7 +67,6 @@ export const AddOrderForm = () => {
                     <AccordionTrigger className="font-bold text-base">Consignor Details</AccordionTrigger>
                     <AccordionContent>
                       <div>
-                        {" "}
                         <p className="text-gray-500">Address</p>
                         <p className="text-sm mt-3 font-normal">{PickupAddress}</p>
                       </div>

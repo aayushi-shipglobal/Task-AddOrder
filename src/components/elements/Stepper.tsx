@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { BuyerDetails } from "../AddOrderForms/BuyerDetails";
-import { OrderDetails } from "../AddOrderForms/OrderDetails";
-import { ShippingPartner } from "../AddOrderForms/ShippingPartner";
-import { PlaceOrder } from "../AddOrderForms/PlaceOrder";
+import { BuyerDetails } from "../addOrderForms/BuyerDetails";
+import { OrderDetails } from "../addOrderForms/OrderDetails";
+import { ShippingPartner } from "../addOrderForms/ShippingPartner";
+import { PlaceOrder } from "../addOrderForms/PlaceOrder";
 
 export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(() => {
