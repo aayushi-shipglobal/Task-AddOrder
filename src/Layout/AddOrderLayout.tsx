@@ -55,7 +55,7 @@ export const AddOrderLayout = () => {
           </div>
 
           <div className="flex-col w-1/3 hidden lg:block">
-            <div className="bg-white max-h-screen rounded-md px-8 py-3 overflow-y-auto">
+            <div className="bg-white max-h-screen rounded-md px-8 py-3 overflow-y-scroll">
               {activeStep === 1 && <QuickTips />}
               {activeStep > 1 && <ConsignorInformation />}
               {activeStep > 2 && <ConsigneeInformation />}

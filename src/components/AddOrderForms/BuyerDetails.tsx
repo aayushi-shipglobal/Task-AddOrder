@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { updateChecked } from "../redux/addOrderSlice";
 import { Form } from "@/components/ui/form";
@@ -19,38 +19,20 @@ export const BuyerDetails = () => {
   const dispatch = useDispatch();
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
-  const form = useForm<z.infer<typeof buyerSchema>>({
-    resolver: zodResolver(buyerSchema),
+  const Schema= buyerSchema(checked)
+
+  const form = useForm<z.infer<typeof Schema>>({
+    resolver: zodResolver(Schema),
     defaultValues: buyerDetails,
   });
 
   
 
-  useEffect(() => {
-    const addressFields = [
-      { shipping: "address1", billing: "address3" },
-      { shipping: "address2", billing: "address4" },
-      { shipping: "landmark", billing: "mark" },
-      { shipping: "pincode", billing: "pincode1" },
-      { shipping: "city", billing: "city1" },
-      { shipping: "state", billing: "state1" },
-      { shipping: "country", billing: "Country" },
-    ];
-    addressFields.forEach(({ shipping, billing }) => {
-      if (checked) {
-        const shippingValue = form.getValues(shipping);
-        form.setValue(billing, shippingValue);
-      } else {
-        form.setValue(billing, "");
-      }
-    });
-  }, [checked, form]);
-
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(updateChecked(e.target.checked));
   };
 
-  const onSubmit = (values: z.infer<typeof buyerSchema>) => {
+  const onSubmit = (values: z.infer<typeof Schema>) => {
     dispatch(updateBuyerDetails(values));
     dispatch(updateStep(3));
   };

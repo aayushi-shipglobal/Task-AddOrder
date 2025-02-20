@@ -2,17 +2,21 @@ import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import {AddressComponent} from "../helpers/AddressComponent"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import React from "react";
 
 export const ConsigneeInformation = () => {
   const { formattedShippingAddress, formattedBillingAddress } = AddressComponent();
   const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
   const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
+    const [openValue, setOpenValue] = React.useState<string | null>("name");
+  
+  
 
 
   return (
     <div>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="address">
+      <Accordion type="single" collapsible value={openValue} onValueChange={setOpenValue}>
+        <AccordionItem value="name">
           <AccordionTrigger className="font-semibold text-base border-t ">Consignee Details</AccordionTrigger>
           <AccordionContent>
             <div className="mt-3">

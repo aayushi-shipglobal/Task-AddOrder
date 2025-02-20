@@ -152,10 +152,10 @@ const ShippingOptionsTable = ({
     <tbody>
       {options.map((provider, index) => (
         <tr key={index} className="cursor-pointer" onClick={() => onSelect(provider)}>
-          <td className="font-medium pt-8 pb-4 pl-5 border-t border-b border-l rounded-l-md">{provider.name}</td>
-          <td className="border-t border-b pt-4">{provider.deliveryTime}</td>
-          <td className="border-t border-b pt-4">{provider.price}</td>
-          <td className="border-t border-b pt-4 border-r rounded-r-md">
+          <td className="font-medium py-6 pl-5 border-t border-b border-l rounded-l-md">{provider.name}</td>
+          <td className="border-t border-b py-6">{provider.deliveryTime}</td>
+          <td className="border-t border-b py-6">Rs. {provider.price}</td>
+          <td className="border-t border-b border-r py-6 rounded-r-md">
             <CircleCheck
               className={`h-6 w-6 cursor-pointer transition-colors ${
                 selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"

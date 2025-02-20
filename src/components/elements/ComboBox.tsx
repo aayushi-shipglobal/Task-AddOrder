@@ -35,7 +35,7 @@ export function ComboBox({ frameworks, placeholder, value, onChange }: ComboboxD
           <ChevronDown className="mr-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
+      <PopoverContent className="p-0 w-[500px]">
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandList>
@@ -50,12 +50,7 @@ export function ComboBox({ frameworks, placeholder, value, onChange }: ComboboxD
                     setOpen(false);
                   }}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
                   {framework.label}
                 </CommandItem>
               ))}

@@ -55,6 +55,30 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%
   }
+  /* Custom scrollbar styles */
+.bg-white {
+  max-height: 100vh;
+  overflow-y: scroll;
+}
+
+.bg-white::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bg-white::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.bg-white::-webkit-scrollbar-thumb {
+  background: #d8d3d3;
+  border-radius: 10px;
+}
+
+.bg-white::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 }
 @layer base {
   * {

@@ -28,7 +28,7 @@ const initialState = {
     breadth: "",
     height: "",
     invoiceNo: "",
-    invoiceDate:new Date().toISOString(),
+    invoiceDate:"",
     invoiceCurrency: "INR",
     orderId: "",
     iossNumber: "",

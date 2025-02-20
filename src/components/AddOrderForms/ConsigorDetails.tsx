@@ -37,7 +37,7 @@ export const ConsignorDetails = () => {
         <form onSubmit={consignorForm.handleSubmit(onSubmit)} className="mt-2 space-y-3">
           <div>
             <Label className="font-normal">Search Customer</Label>
-            <div className="max-w-max overflow-hidden mt-3">
+            <div className="w-auto mr-36 overflow-hidden text-ellipsis mt-3">
               <Select form={consignorForm} name="pickupAddress" />
             </div>
           </div>

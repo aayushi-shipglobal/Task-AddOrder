@@ -46,11 +46,26 @@ export const OrderDetails = () => {
   }));
 
   useEffect(() => {
-    if (!orderDetails || !itemDetails) return;
+    const payload = {
+      csbv: "0",
+      currency_code: orderDetails.invoiceCurrency,
+      package_breadth: Number(orderDetails.breadth),
+      package_height: Number(orderDetails.height),
+      package_length: Number(orderDetails.length),
+      package_weight: Number(orderDetails.actualWeight),
+      vendor_order_item: itemDetails.map((item: any) => ({
+        vendor_order_item_name: item.productName,
+        vendor_order_item_sku: item.sku,
+        vendor_order_item_hsn: item.hsn,
+        vendor_order_item_quantity: Number(item.qty),
+        vendor_order_item_unit_price: Number(item.unitPrice),
+        vendor_order_item_tax_rate: item.igst,
+      })),
+    };
 
-    const validateOrder = async () => {
+    const validateOrder = async (orderDetails:any, itemDetails:any) => {
       try {
-        const result = await validateOrderInvoice(orderDetails, itemDetails);
+        const result = await validateOrderInvoice(payload);
 
         if (result.data?.box?.["1"]?.exceeds_limit) {
           setErrorMessage(result.data.box["1"].exceeds_text);
@@ -65,11 +80,11 @@ export const OrderDetails = () => {
       }
     };
 
-    validateOrder();
+  validateOrder(orderDetails, itemDetails);
   }, [orderDetails, itemDetails]);
 
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
-    const isValid = await validateOrderInvoice(orderDetails, itemDetails);
+    const isValid = await validateInvoice(orderDetails, itemDetails);
 
     if (!isValid) {
       return;
@@ -87,7 +102,6 @@ export const OrderDetails = () => {
               control={form.control}
               label="Invoice No."
               name="invoiceNo"
-              placeholder="Enter Invoice Number..."
             />
             <DatePicker
               control={form.control}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
@@ -7,6 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Required } from "./Required";
 
 interface DatePickerProps {
   control: Control<any>;
@@ -17,31 +18,31 @@ interface DatePickerProps {
   placeholder?: string;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({
-  control,
-  name,
-  label,
-  date,
-  setDate,
- 
-}) => {
+const DatePicker: React.FC<DatePickerProps> = ({ control, name, label, date, setDate }) => {
+  const [isPopoverOpen, setPopoverOpen] = useState(false);
+
+  const handleDateSelect = (selectedDate: Date | null) => {
+    setDate(selectedDate);
+    setPopoverOpen(false); // Close popover after selecting a date
+  };
+
   return (
     <FormItem>
       <FormLabel>
-        {label} <span className="text-red-500">*</span>
+        {label} <Required />
       </FormLabel>
       <FormControl>
         <Controller
           control={control}
           name={name}
           render={({ field }) => (
-            <Popover>
+            <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "lg:w-[240px] w-[700px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground",
+                    "lg:w-[230px] justify-start text-left font-normal flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors",
+                    !date && "text-muted-foreground ",
                   )}
                 >
                   <span className="flex-grow">{date ? format(date, "PPP") : "Pick a Date"}</span>
@@ -53,7 +54,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   mode="single"
                   selected={date}
                   onSelect={(selectedDate) => {
-                    setDate(selectedDate);
+                    handleDateSelect(selectedDate); 
                     field.onChange(selectedDate);
                   }}
                   initialFocus
@@ -63,7 +64,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           )}
         />
       </FormControl>
-      <FormMessage className="font-normal text-xs" />
+      {!date && <FormMessage className="font-normal text-xs">Please select invoice date</FormMessage>}
     </FormItem>
   );
 };

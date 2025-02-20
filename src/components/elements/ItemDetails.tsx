@@ -36,13 +36,10 @@ const ItemDetails = ({ form, errorMessage }) => {
         <FormItem>
           <FormLabel className="text-sm font-normal">
             {itemFields[itemField]}
-            {itemField !== "sku" && <Required/>}
+            {itemField !== "sku" && <Required />}
           </FormLabel>
           <FormControl>
-            <Input
-              placeholder={`Enter ${itemFields[itemField]}...`}
-              {...field}
-            />
+            <Input placeholder={`Enter ${itemFields[itemField]}...`} {...field} className="w-24" />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -57,12 +54,12 @@ const ItemDetails = ({ form, errorMessage }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-sm font-normal">
-            IGST <Required/>
+            IGST <Required />
           </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={true}>
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder="Select IGST" />
+                <SelectValue placeholder="0%"/>
               </SelectTrigger>
             </FormControl>
             <SelectContent>
@@ -83,12 +80,7 @@ const ItemDetails = ({ form, errorMessage }) => {
             {Object.keys(itemFields).map((itemField) => renderFormField(itemField, index))}
             {renderIGSTField(index)}
           </div>
-          {index > 0 && (
-            <Trash2
-              className="w-7 h-7 cursor-pointer text-red-500 mt-8"
-              onClick={() => remove(index)}
-            />
-          )}
+          {index > 0 && <Trash2 className="w-7 h-7 cursor-pointer text-red-500 mt-8" onClick={() => remove(index)} />}
         </div>
       ))}
       {errorMessage && <div className="mt-4 font-semibold text-red-500 text-sm">{errorMessage}</div>}
