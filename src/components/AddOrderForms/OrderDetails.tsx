@@ -21,8 +21,9 @@ export const OrderDetails = () => {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = React.useState("");
   const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
+  type OrderInterface = z.infer<typeof orderSchema>;
 
-  const form = useForm<z.infer<typeof orderSchema>>({
+  const form = useForm<OrderInterface>({
     resolver: zodResolver(orderSchema),
     defaultValues: orderDetails,
   });
@@ -36,7 +37,7 @@ export const OrderDetails = () => {
     igst: form.watch(`items.${index}.igst`),
   }));
 
-  const onSubmit = async (values: z.infer<typeof orderSchema>) => {
+  const onSubmit = async (values: OrderInterface) => {
     if (!orderDetails || !itemDetails) return;
 
     try {
@@ -106,7 +107,7 @@ export const OrderDetails = () => {
           <div>
             <div className="flex gap-x-1 mt-6">
               <div className="font-bold text-base">Item(s) Details</div>
-              <p className="bg-orange-50 text-red-500 rounded-md text-xs text-center p-1">Items that can export</p>
+              <p className="bg-orange-50 text-red-400 rounded-md text-xs text-center p-1">Items that can export</p>
             </div>
             <ItemDetails form={form} errorMessage={errorMessage} />
           </div>

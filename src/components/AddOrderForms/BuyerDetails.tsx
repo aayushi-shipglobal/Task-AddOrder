@@ -18,8 +18,9 @@ export const BuyerDetails = () => {
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
   const buyerDataSchema = buyerSchema(checked);
+  type buyerInterface = z.infer<typeof buyerDataSchema>;
 
-  const form = useForm<z.infer<typeof buyerDataSchema>>({
+  const form = useForm<buyerInterface>({
     resolver: zodResolver(buyerDataSchema),
     defaultValues: buyerDetails,
   });
@@ -28,7 +29,7 @@ export const BuyerDetails = () => {
     dispatch(updateChecked(e.target.checked));
   };
 
-  const onSubmit = (values: z.infer<typeof buyerDataSchema>) => {
+  const onSubmit = (values: buyerInterface) => {
     dispatch(updateBuyerDetails(values));
     dispatch(updateStep(3));
   };
@@ -41,17 +42,21 @@ export const BuyerDetails = () => {
           <BuyerComponent form={form} />
           <p className="text-base font-bold mb-2 mt-6">Shipping Address</p>
           <AddressForm form={form} isBillingAddress={false} />
-            <div className="items-top flex my-6 space-x-2 cursor-pointer">
-              <Checkbox id="terms1" checked={checked} onClick={() => handleCheckboxChange({ target: { checked: !checked } })} />
-              <div className="grid gap-1.5 leading-none">
-                <label
-                  htmlFor="terms1"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mt-0.5 cursor-pointer"
-                >
-                  Billing Address is same as Shipping Address.
-                </label>
-              </div>
+          <div className="items-top flex my-6 space-x-2 cursor-pointer">
+            <Checkbox
+              id="terms1"
+              checked={checked}
+              onClick={() => handleCheckboxChange({ target: { checked: !checked } })}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="terms1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mt-0.5 cursor-pointer"
+              >
+                Billing Address is same as Shipping Address.
+              </label>
             </div>
+          </div>
           {!checked && (
             <div>
               <p className="font-bold text-base mb-1">Billing Address</p>
