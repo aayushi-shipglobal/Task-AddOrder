@@ -42,6 +42,7 @@ const initialState = {
         igst: "",
       },
     ],
+    completeOrderForm:false,
   },
   step: 1,
   shippingPartner: { name: "", rate: "" },
@@ -80,6 +81,9 @@ const addOrderSlice = createSlice({
     },
     updateChecked: (state, action) => {
       state.buyerDetailsData.checked = action.payload;
+    },
+    updateCompleteOrderForm: (state, action) => {
+      state.orderDetailsData.completeOrderForm=action.payload;
     }
   },
 });
@@ -88,6 +92,7 @@ export const {
   updateBuyerDetails,
   updateOrderDetails,
   updateStep,
+  updateCompleteOrderForm,
   updateShippingPartner,
   updatePickupAddress,
   setItemToOrder,

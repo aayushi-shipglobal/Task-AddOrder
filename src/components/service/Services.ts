@@ -1,4 +1,4 @@
-import { token } from "./token";
+import {token} from "./token"
 
 export const fetchCountry = async () => {
   try {
@@ -63,8 +63,23 @@ export const fetchShippers = async (payload: any) => {
   }
 };
 
-export const validateOrderInvoice = async (payload:any) => {
-  
+export const validateOrderInvoice = async (orderDetails: any, itemDetails: any) => {
+  const payload = {
+    csbv: "0",
+    currency_code: orderDetails.invoiceCurrency,
+    package_breadth: Number(orderDetails.breadth),
+    package_height: Number(orderDetails.height),
+    package_length: Number(orderDetails.length),
+    package_weight: Number(orderDetails.actualWeight),
+    vendor_order_item: itemDetails.map((item: any) => ({
+      vendor_order_item_name: item.productName,
+      vendor_order_item_sku: item.sku,
+      vendor_order_item_hsn: item.hsn,
+      vendor_order_item_quantity: Number(item.qty),
+      vendor_order_item_unit_price: Number(item.unitPrice),
+      vendor_order_item_tax_rate: item.igst,
+    })),
+  };
 
   try {
     const response = await fetch(`https://api.fr.stg.shipglobal.in/api/v1/orders/validate-order-invoice`, {
@@ -81,6 +96,5 @@ export const validateOrderInvoice = async (payload:any) => {
     return result;
   } catch (error) {
     console.error("Error fetching order validation:", error);
-   
   }
 };

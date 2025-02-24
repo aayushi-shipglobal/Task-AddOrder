@@ -16,7 +16,7 @@ export const OrderFormComponent = ({ name, control, label }: OrderFormComponentP
         name={name}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="mb-1 text-black">
+            <FormLabel className="mb-1 text-black font-normal">
               {label}
               {name == "invoiceNo" && <Required />}
             </FormLabel>

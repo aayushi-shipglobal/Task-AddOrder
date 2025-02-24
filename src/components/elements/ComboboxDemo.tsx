@@ -31,11 +31,10 @@ export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between bg-slate-100 text-gray-600 w-full overflow-hidden"
+          className="justify-between bg-slate-100 text-gray-600 w-full"
         >
-          <span className=" text-ellipsis overflow-hidden whitespace-nowrap">
-            {frameworks.find((framework) => framework.value === value)?.label || label}
-          </span>
+          {frameworks.find((framework) => framework.value === value)?.label || label}
+
           <ChevronDown className="mr-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -47,8 +46,8 @@ export function ComboboxDemo({ label, frameworks, placeholder, value, onChange }
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
-                  key={framework.label}
-                  value={framework.label}
+                  key={framework.value}
+                  value={framework.value}
                   onSelect={(currentValue) => {
                     onChange(currentValue === value ? "" : currentValue);
                     setOpen(false);

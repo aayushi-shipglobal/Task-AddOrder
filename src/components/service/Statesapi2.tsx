@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ComboboxDemo } from "../elements/ComboboxDemo";
 import { fetchStatesByCountry } from "./Services";
+import { Required } from "../elements/Required";
 
 type Props = {
   form: any;
   name: string;
 };
 
-export const StatesApi = ({ form, name }: Props) => {
+export const Statesapi2 = ({ form, name }: Props) => {
   const [states, setStates] = useState<any[]>([]);
 
-  const countrySelected = form.watch("country");
-
+  const countrySelected = form.watch("Country");
+  const prevCountry = useRef(countrySelected);
   useEffect(() => {
     if (!countrySelected) {
       form.setValue(name, "");
       setStates([]);
       return;
     }
-
+    if (prevCountry.current !== countrySelected) {
+      form.setValue(name, "");
+      prevCountry.current = countrySelected;
+    }
     const fetchStates = async () => {
       try {
         const formattedStates = await fetchStatesByCountry(countrySelected);
@@ -38,7 +42,8 @@ export const StatesApi = ({ form, name }: Props) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-gray-700">
-            State <span className="text-red-500">*</span>
+            State
+            <Required />
           </FormLabel>
           <FormControl>
             <ComboboxDemo

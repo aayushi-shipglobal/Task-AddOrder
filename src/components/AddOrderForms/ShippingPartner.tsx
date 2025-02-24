@@ -3,7 +3,7 @@ import { CircleCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { updateShippingPartner } from "@/components/redux/addOrderSlice";
-import { fetchShippers } from "@/components/services/Services";
+import { fetchShippers } from "@/components/service/Services";
 import { ErrorMessage } from "../elements/ErrorMessage";
 
 function ShippingPartner() {
@@ -20,7 +20,7 @@ function ShippingPartner() {
   const volumetricWeight =
     (Number(orderDetails.length) * Number(orderDetails.breadth) * Number(orderDetails.height)) / 5000;
 
-  useEffect(() => {
+  const fetchShippingRates = async () => {
     const requestPayload = {
       customer_shipping_country_code: buyerInformation.country,
       customer_shipping_postcode: buyerInformation.pincode,
@@ -30,27 +30,28 @@ function ShippingPartner() {
       package_weight: Number(orderDetails.actualWeight),
     };
 
-    const fetchRates = async () => {
-      setIsLoading(true);
-      try {
-        const rates = await fetchShippers(requestPayload);
-        setAvailableShippingOptions(
-          rates.map((rate: any) => ({
-            name: rate.display_name,
-            deliveryTime: rate.transit_time,
-            price: rate.rate,
-          })),
-        );
-      } catch (err) {
-        console.error("Error fetching shipping options:", err);
-        setApiError("Failed to fetch shipping options. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
 
-    fetchRates();
-  }, [currentStep, buyerInformation, orderDetails]);
+    try {
+      const rates = await fetchShippers(requestPayload);
+      setAvailableShippingOptions(
+        rates.map((rate: any) => ({
+          name: rate.display_name,
+          deliveryTime: rate.transit_time,
+          price: rate.rate,
+          helper: rate.helper_text,
+        })),
+      );
+    } catch (err) {
+      console.error("Error fetching shipping options:", err);
+      setApiError("Failed to fetch shipping options. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (currentStep == 4) fetchShippingRates();
+  }, [currentStep]);
 
   const handleShippingProviderSelection = (provider: any) => {
     dispatch(
@@ -124,7 +125,7 @@ const WeightCard = ({ label, value, highlight = false }: { label: string; value:
   <div
     className={`border ${
       highlight ? "border-orange-300 bg-orange-50 text-orange-400" : "border-gray-300 bg-gray-100 text-gray-500"
-    } text-center px-4 py-2 min-w-32 rounded-md`}
+    } text-center px-4 py-3 my-1 lg:my-0 lg:py2 w-40 lg:min-w-32 rounded-md`}
   >
     <p className="font-medium text-base">{value.toFixed(2)} KG</p>
     <p className="text-xs font-medium ">{label}</p>
@@ -149,13 +150,19 @@ const ShippingOptionsTable = ({
         <th className="border-t border-b border-r rounded-r-md pr-2 font-normal">Select</th>
       </tr>
     </thead>
-    <tbody>
-      {options.map((provider, index) => (
+
+    {options.map((provider, index) => (
+      <tbody>
+        <tr>
+          <td className="absolute mt-2.5 w-full border-t bg-blue-50 border-x text-xs rounded-t-sm text-red-500 px-3 py-1">
+            Duties will be charged, if applicable
+          </td>
+        </tr>
         <tr key={index} className="cursor-pointer" onClick={() => onSelect(provider)}>
-          <td className="font-medium py-6 pl-5 border-t border-b border-l rounded-l-md">{provider.name}</td>
-          <td className="border-t border-b py-6">{provider.deliveryTime}</td>
-          <td className="border-t border-b py-6">Rs. {provider.price}</td>
-          <td className="border-t border-b border-r py-6 rounded-r-md">
+          <td className="font-medium pl-5 border-t border-b border-l rounded-l-md pt-6">{provider.name}</td>
+          <td className="border-t border-b pt-6">{provider.deliveryTime}</td>
+          <td className="border-t border-b pt-6">Rs. {provider.price}</td>
+          <td className="border-t border-b border-r py-6 rounded-r-md pt-11">
             <CircleCheck
               className={`h-6 w-6 cursor-pointer transition-colors ${
                 selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
@@ -163,8 +170,8 @@ const ShippingOptionsTable = ({
             />
           </td>
         </tr>
-      ))}
-    </tbody>
+      </tbody>
+    ))}
   </table>
 );
 

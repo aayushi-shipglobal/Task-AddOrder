@@ -13,22 +13,22 @@ interface DatePickerProps {
   control: Control<any>;
   name: string;
   label: string;
-  date: Date | null;
-  setDate: React.Dispatch<React.SetStateAction<Date | null>>;
   placeholder?: string;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ control, name, label, date, setDate }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ control, name, label }) => {
   const [isPopoverOpen, setPopoverOpen] = useState(false);
 
-  const handleDateSelect = (selectedDate: Date | null) => {
-    setDate(selectedDate);
-    setPopoverOpen(false); // Close popover after selecting a date
+  const handleDateSelect = (selectedDate: Date | null, field: any) => {
+    if (selectedDate) {
+      field.onChange(selectedDate); 
+    }
+    setPopoverOpen(false);
   };
 
   return (
     <FormItem>
-      <FormLabel>
+      <FormLabel className="font-normal">
         {label} <Required />
       </FormLabel>
       <FormControl>
@@ -36,35 +36,38 @@ const DatePicker: React.FC<DatePickerProps> = ({ control, name, label, date, set
           control={control}
           name={name}
           render={({ field }) => (
-            <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "lg:w-[230px] justify-start text-left font-normal flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors",
-                    !date && "text-muted-foreground ",
-                  )}
-                >
-                  <span className="flex-grow">{date ? format(date, "PPP") : "Pick a Date"}</span>
-                  <CalendarIcon className="ml-auto" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(selectedDate) => {
-                    handleDateSelect(selectedDate); 
-                    field.onChange(selectedDate);
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <>
+              <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "lg:w-full justify-start text-left font-normal flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                      !field.value && "text-muted-foreground ",
+                    )}
+                  >
+                    <span className="flex-grow">
+                      {field.value ? format(field.value, "PPP") : "Pick a Date"}
+                    </span>
+                    <CalendarIcon className="ml-auto" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={(selectedDate) => handleDateSelect(selectedDate, field)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {!field.value && (
+                <FormMessage className="font-normal text-xs">Please select invoice date</FormMessage>
+              )}
+            </>
           )}
         />
       </FormControl>
-      {!date && <FormMessage className="font-normal text-xs">Please select invoice date</FormMessage>}
     </FormItem>
   );
 };

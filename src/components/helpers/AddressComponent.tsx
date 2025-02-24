@@ -13,7 +13,7 @@ export const AddressComponent = () => {
     buyerData.address2,
     buyerData.city,
     buyerData.state,
-    buyerData.country,
+    localStorage.getItem("value"),
     buyerData.pincode,
   ];
 
@@ -22,7 +22,7 @@ export const AddressComponent = () => {
     buyerData.address4,
     buyerData.city1,
     buyerData.state1,
-    buyerData.Country,
+    localStorage.getItem("item"),
     buyerData.pincode1,
   ];
 

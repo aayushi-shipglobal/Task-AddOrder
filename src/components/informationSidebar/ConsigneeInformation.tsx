@@ -1,6 +1,6 @@
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import {AddressComponent} from "../helpers/AddressComponent"
+import { AddressComponent } from "../helpers/AddressComponent";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import React from "react";
 
@@ -8,9 +8,8 @@ export const ConsigneeInformation = () => {
   const { formattedShippingAddress, formattedBillingAddress } = AddressComponent();
   const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
   const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
-    const [openValue, setOpenValue] = React.useState<string | null>("name");
-  
-  
+  const step = useSelector((state: RootState) => state.addOrder.step);
+  const [openValue, setOpenValue] = React.useState<string | null>("name");
 
 
   return (
@@ -33,16 +32,12 @@ export const ConsigneeInformation = () => {
                 {checked ? (
                   <p className="text-sm font-normal">Same as shipping Address</p>
                 ) : (
-                  <p className="text-sm font-normal mt-1">
-                    {formattedBillingAddress}
-                  </p>
+                  <p className="text-sm font-normal mt-1">{formattedBillingAddress}</p>
                 )}
               </div>
               <div className="mt-3">
                 <p className="text-gray-500 mb-1">Shipping Address</p>
-                <p className="text-sm  font-normal">
-                  {formattedShippingAddress}
-                </p>
+                <p className="text-sm  font-normal">{formattedShippingAddress}</p>
               </div>
             </div>
           </AccordionContent>

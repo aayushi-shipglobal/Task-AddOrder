@@ -34,12 +34,12 @@ const ItemDetails = ({ form, errorMessage }) => {
       name={`items.${index}.${itemField}`}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-sm font-normal">
+          <FormLabel className="text-sm font-normal text-black text-ellipsis overflow-hidden whitespace-nowrap">
             {itemFields[itemField]}
             {itemField !== "sku" && <Required />}
           </FormLabel>
           <FormControl>
-            <Input placeholder={`Enter ${itemFields[itemField]}...`} {...field} className="w-24" />
+            <Input placeholder={`Enter ${itemFields[itemField]}...`} {...field} className="lg:w-full" />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -53,16 +53,16 @@ const ItemDetails = ({ form, errorMessage }) => {
       name={`items.${index}.igst`}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-sm font-normal">
+          <FormLabel className="text-sm font-normal text-black">
             IGST <Required />
           </FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={true}>
-            <FormControl>
+          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={true} >
+            <FormControl className="w-16">
               <SelectTrigger>
-                <SelectValue placeholder="0%"/>
+                <SelectValue placeholder="0%" className="w-16"/>
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent className="w-16">
               <SelectItem value="0">0%</SelectItem>
             </SelectContent>
           </Select>
@@ -75,12 +75,12 @@ const ItemDetails = ({ form, errorMessage }) => {
   return (
     <div>
       {fields.map((field, index) => (
-        <div key={field.id} className="lg:flex items-center gap-x-1">
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-1 mt-2">
+        <div key={field.id} className="lg:flex items-center gap-x-2">
+          <div className="grid grid-cols-1 lg:flex  gap-2 mt-2">
             {Object.keys(itemFields).map((itemField) => renderFormField(itemField, index))}
             {renderIGSTField(index)}
           </div>
-          {index > 0 && <Trash2 className="w-7 h-7 cursor-pointer text-red-500 mt-8" onClick={() => remove(index)} />}
+          {index > 0 && <Trash2 className="w-5 h-5 cursor-pointer text-red-500 mt-8 font-normal" onClick={() => remove(index)} />}
         </div>
       ))}
       {errorMessage && <div className="mt-4 font-semibold text-red-500 text-sm">{errorMessage}</div>}
@@ -98,11 +98,12 @@ const ItemDetails = ({ form, errorMessage }) => {
               igst: "0",
             })
           }
-          className="flex bg-white border-0 shadow-none text-sm max-w-max items-center gap-2 hover:bg-white"
+          className="flex border-0 shadow-none text-sm max-w-max items-center gap-2 bg-transparent hover:bg-transparent"
         >
           <Plus className="w-4 h-4 text-blue-800" />
           <span className="text-blue-800 underline font-medium">Add Another Product</span>
         </Button>
+       
         <p className="text-base font-semibold mt-2">
           Total Price: {currency} {calculateTotalPrice.toFixed(2)}
         </p>

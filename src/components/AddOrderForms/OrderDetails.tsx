@@ -5,14 +5,13 @@ import { Form } from "@/components/ui/form";
 import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
 import { OrderFormComponent } from "../elements/OrderFormComponent";
 import * as React from "react";
-import { updateOrderDetails, updateStep } from "../redux/addOrderSlice";
+import { updateCompleteOrderForm, updateOrderDetails, updateStep } from "../redux/addOrderSlice";
 import { Button } from "@/components/ui/button";
 import ItemDetails from "../elements/ItemDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { orderSchema } from "../schemas/ValidationSchemas";
-import { validateOrderInvoice } from "../services/Services";
-import { useEffect } from "react";
+import { validateOrderInvoice } from "../service/Services";
 import DatePicker from "../elements/DatePicker";
 import CurrencySelect from "../elements/CurrencySelect";
 
@@ -26,10 +25,10 @@ const frameworks = [
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date | null>(null);
-  const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const dispatch = useDispatch();
   const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
+
 
   const form = useForm<z.infer<typeof orderSchema>>({
     resolver: zodResolver(orderSchema),
@@ -45,96 +44,52 @@ export const OrderDetails = () => {
     igst: form.watch(`items.${index}.igst`),
   }));
 
-  useEffect(() => {
-    const payload = {
-      csbv: "0",
-      currency_code: orderDetails.invoiceCurrency,
-      package_breadth: Number(orderDetails.breadth),
-      package_height: Number(orderDetails.height),
-      package_length: Number(orderDetails.length),
-      package_weight: Number(orderDetails.actualWeight),
-      vendor_order_item: itemDetails.map((item: any) => ({
-        vendor_order_item_name: item.productName,
-        vendor_order_item_sku: item.sku,
-        vendor_order_item_hsn: item.hsn,
-        vendor_order_item_quantity: Number(item.qty),
-        vendor_order_item_unit_price: Number(item.unitPrice),
-        vendor_order_item_tax_rate: item.igst,
-      })),
-    };
-
-    const validateOrder = async (orderDetails:any, itemDetails:any) => {
-      try {
-        const result = await validateOrderInvoice(payload);
-
-        if (result.data?.box?.["1"]?.exceeds_limit) {
-          setErrorMessage(result.data.box["1"].exceeds_text);
-          setError(true);
-        } else {
-          setErrorMessage("");
-          setError(false);
-        }
-      } catch (error: any) {
-        setErrorMessage(error.message || "There was an error while validating the order.");
-        setError(true);
-      }
-    };
-
-  validateOrder(orderDetails, itemDetails);
-  }, [orderDetails, itemDetails]);
-
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
-    const isValid = await validateInvoice(orderDetails, itemDetails);
-
-    if (!isValid) {
-      return;
+    if (!orderDetails || !itemDetails) return;
+  
+    try {
+      const result = await validateOrderInvoice(orderDetails, itemDetails);
+  
+      if (result.data?.box?.["1"]?.exceeds_limit) {
+        setErrorMessage(result.data.box["1"].exceeds_text);
+        return;
+      } else {
+        setErrorMessage(""); 
+      }
+        dispatch(updateOrderDetails(values));
+      dispatch(updateStep(4));
+  
+    } catch (error: any) {
+      setErrorMessage(error.message || "There was an error while validating the order.");
     }
-    dispatch(updateOrderDetails(values));
-    dispatch(updateStep(4));
   };
-
+  
   return (
     <div className="px-3 md:px-7 py-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-2 gap-x-4">
-            <OrderFormComponent
-              control={form.control}
-              label="Invoice No."
-              name="invoiceNo"
-            />
-            <DatePicker
-              control={form.control}
-              name="invoiceDate"
-              label="Invoice Date"
-              date={date}
-              setDate={setDate}
-             
-            />
+            <OrderFormComponent control={form.control} label="Invoice No." name="invoiceNo" />
+              <DatePicker
+                control={form.control}
+                name="invoiceDate"
+                label="Invoice Date"
+                date={date}
+                setDate={setDate}
+              />
+              <CurrencySelect
+                control={form.control}
+                name="invoiceCurrency"
+                frameworks={frameworks}
+                label="Invoice Currency"
+                placeholder="INR"
+              />
 
-            <CurrencySelect
-              control={form.control}
-              name="invoiceCurrency"
-              frameworks={frameworks}
-              label="Invoice Currency"
-              placeholder="INR"
-            />
-
-            <OrderFormComponent
-              control={form.control}
-              label="Order/Reference ID"
-              name="orderId"
-              placeholder="Enter Order/Reference ID..."
-            />
-            <OrderFormComponent
-              control={form.control}
-              label="IOSS Number:"
-              name="iossNumber"
-              placeholder="Enter IOSS Number..."
-            />
+            <OrderFormComponent control={form.control} label="Order/Reference ID" name="orderId" />
+            <OrderFormComponent control={form.control} label="IOSS Number:" name="iossNumber" />
           </div>
 
-          <p className="text-base font-bold mt-6">Box Measurements</p>
+          <p className="text-base font-bold mt-6 mb-2">Box Measurements</p>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-2 gap-x-4">
             <ShipmentDetailsComponent
               control={form.control}

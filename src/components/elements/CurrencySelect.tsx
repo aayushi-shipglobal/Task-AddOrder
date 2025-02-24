@@ -1,5 +1,6 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { ComboboxDemo } from "../elements/ComboboxDemo";
+import { ComboboxDemo } from "./ComboboxDemo";
+import { Required } from "./Required";
 interface CurrencySelectProps {
   control: any;
   frameworks: any;
@@ -15,8 +16,8 @@ const CurrencySelect = ({ control, name, frameworks, label, placeholder = "INR" 
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>
-            {label} <span className="text-red-500">*</span>
+          <FormLabel className="font-normal">
+            {label} <Required/>
           </FormLabel>
           <FormControl>
             <div className="flex flex-row border border-gray-300 rounded mt-2">

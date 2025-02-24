@@ -24,7 +24,7 @@ export const ShipmentDetailsComponent = ({
         name={name}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="mb-1 text-black">
+            <FormLabel className="mb-1 text-black font-normal">
               {label}
               <Required />
             </FormLabel>
