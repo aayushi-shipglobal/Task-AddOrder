@@ -1,5 +1,5 @@
-import { RootState } from "@/store";
 import { useState } from "react";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 
 export const ItemDetailsInformation = () => {

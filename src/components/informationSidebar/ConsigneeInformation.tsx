@@ -1,14 +1,13 @@
+import React from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { AddressComponent } from "../helpers/AddressComponent";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import React from "react";
 
 export const ConsigneeInformation = () => {
   const { formattedShippingAddress, formattedBillingAddress } = AddressComponent();
   const buyerData = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
   const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
-  const step = useSelector((state: RootState) => state.addOrder.step);
   const [openValue, setOpenValue] = React.useState<string | null>("name");
 
 

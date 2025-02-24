@@ -1,6 +1,7 @@
+import { ComboBox } from "./ComboBox";
+import { customers } from "../array/array";
 import { UseFormReturn } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
-import { ComboBox } from "./ComboBox";
 
 interface SelectProps {
   form: UseFormReturn<any>;
@@ -8,13 +9,6 @@ interface SelectProps {
 }
 
 export const Select = ({ form, name }: SelectProps) => {
-  const customers = [
-    {
-      value: "Head OFFICE, mahipalpur, Indira Park, South West Delhi, Delhi-110045",
-      label: "Head OFFICE, mahipalpur, Indira Park, South West Delhi, Delhi-110045",
-    },
-  ];
-
   return (
     <div>
       <FormField

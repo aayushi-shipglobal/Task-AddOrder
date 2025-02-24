@@ -2,6 +2,7 @@ import { z } from "zod";
 import * as React from "react";
 import { RootState } from "@/store";
 import { useForm } from "react-hook-form";
+import { frameworks } from "../array/array";
 import { Form } from "@/components/ui/form";
 import DatePicker from "../elements/DatePicker";
 import { Button } from "@/components/ui/button";
@@ -14,14 +15,6 @@ import { orderSchema } from "../schemas/ValidationSchemas";
 import { OrderFormComponent } from "../elements/OrderFormComponent";
 import { updateOrderDetails, updateStep } from "../redux/addOrderSlice";
 import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
-
-const frameworks = [
-  { value: "EUR", label: "EUR" },
-  { value: "GBP", label: "GBP" },
-  { value: "INR", label: "INR" },
-  { value: "SAR", label: "SAR" },
-  { value: "USD", label: "USD" },
-];
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date | null>(null);

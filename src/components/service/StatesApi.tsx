@@ -1,71 +1,15 @@
 "use client";
 
-import * as React from "react";
-import { Check, ChevronDown } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { fetchStatesByCountry } from "./Services";
 import { Required } from "../elements/Required";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandList, CommandItem, CommandGroup, CommandInput, CommandEmpty } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
+import { fetchStatesByCountry } from "./Services";
+import { useState, useEffect, useRef } from "react";
+import { ComboboxDemo } from "../elements/ComboboxDemo";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 type Framework = {
   value: string;
   label: string;
 };
-
-type ComboboxDemoProps = {
-  label: string;
-  frameworks: Framework[];
-  placeholder: string;
-  value?: string;
-  onChange: (value: string) => void;
-};
-
-function ComboboxDemo({ label, frameworks, placeholder, value, onChange }: ComboboxDemoProps) {
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="justify-between bg-slate-100 text-gray-600 w-full"
-        >
-          {frameworks.find((framework) => framework.value === value)?.label || label}
-          <ChevronDown className="mr-1 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
-        <Command>
-          <CommandInput placeholder={placeholder} />
-          <CommandList>
-            <CommandEmpty>No state found.</CommandEmpty>
-            <CommandGroup>
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
-                  {framework.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  );
-}
 
 type Props = {
   form: any;
