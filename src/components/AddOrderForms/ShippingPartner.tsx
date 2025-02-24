@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { CircleCheck } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { updateShippingPartner } from "@/components/redux/addOrderSlice";
-import { fetchShippers } from "@/components/service/Services";
+import { CircleCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { ErrorMessage } from "../elements/ErrorMessage";
+import { fetchShippers } from "@/components/service/Services";
+import { updateShippingPartner } from "@/components/redux/addOrderSlice";
 
 function ShippingPartner() {
   const dispatch = useDispatch();
-  const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
-  const selectedShippingProvider = useSelector((state: RootState) => state.addOrder.shippingPartner);
-  const buyerInformation = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
   const currentStep = useSelector((state: RootState) => state.addOrder.step);
+  const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
+  const buyerInformation = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
+  const selectedShippingProvider = useSelector((state: RootState) => state.addOrder.shippingPartner);
 
   const [availableShippingOptions, setAvailableShippingOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,11 +74,9 @@ function ShippingPartner() {
         <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are
         inclusive of covid & fuel surcharge, exclusive of GST and ex-Delhi Hub.
       </p>
-
       <p>
         In case of any doubt, please call/whatsapp at <span className="text-blue-800 font-semibold">011-422 77777</span>
       </p>
-
       <div className="flex flex-col md:flex-row items-center gap-2 justify-center px-10 md:px-32 mt-5">
         <WeightCard label="Dead Weight" value={Number(orderDetails.actualWeight)} />
         <WeightCard label="Volumetric Weight" value={volumetricWeight} />
@@ -88,10 +86,9 @@ function ShippingPartner() {
           highlight
         />
       </div>
-
       {isLoading && <p className="text-center mt-5">Loading available shipping options...</p>}
       {apiError && <ErrorMessage apiError={apiError} />}
-
+      {availableShippingOptions.length==0 && <p className="text-center mt-5 font-semibold">No shipping options available.</p>}
       {availableShippingOptions.length > 0 && (
         <>
           <p className="mt-5 font-semibold">
@@ -104,7 +101,6 @@ function ShippingPartner() {
           />
         </>
       )}
-
       <div className="flex justify-end py-5">
         <button
           type="submit"
@@ -153,24 +149,24 @@ const ShippingOptionsTable = ({
 
     {options.map((provider, index) => (
       <tbody>
-        <tr>
-          <td className="absolute mt-2.5 w-full border-t bg-blue-50 border-x text-xs rounded-t-sm text-red-500 px-3 py-1">
-            Duties will be charged, if applicable
-          </td>
-        </tr>
-        <tr key={index} className="cursor-pointer" onClick={() => onSelect(provider)}>
-          <td className="font-medium pl-5 border-t border-b border-l rounded-l-md pt-6">{provider.name}</td>
-          <td className="border-t border-b pt-6">{provider.deliveryTime}</td>
-          <td className="border-t border-b pt-6">Rs. {provider.price}</td>
-          <td className="border-t border-b border-r py-6 rounded-r-md pt-11">
-            <CircleCheck
-              className={`h-6 w-6 cursor-pointer transition-colors ${
-                selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
-              }`}
-            />
-          </td>
-        </tr>
-      </tbody>
+      <tr>
+        <td className="absolute mt-2.5 w-full border-t bg-blue-50 border-x text-xs rounded-t-sm text-red-500 px-2 py-1">
+          Duties will be charged, if applicable
+        </td>
+      </tr>
+      <tr key={index} className="cursor-pointer" onClick={() => onSelect(provider)}>
+        <td className="font-medium pl-4 border-t border-b border-l rounded-l-md pt-6 text-sm">{provider.name}</td>
+        <td className="border-t border-b pt-6 text-sm">{provider.deliveryTime}</td>
+        <td className="border-t border-b pt-6 text-sm">Rs. {provider.price}</td>
+        <td className="border-t border-b border-r py-5 rounded-r-md pt-10">
+          <CircleCheck
+            className={`h-5 w-5 cursor-pointer transition-colors ${
+              selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
+            }`}
+          />
+        </td>
+      </tr>
+    </tbody>
     ))}
   </table>
 );

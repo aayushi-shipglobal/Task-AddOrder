@@ -1,36 +1,34 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm} from "react-hook-form";
 import { z } from "zod";
-import { updateChecked } from "../redux/addOrderSlice";
-import { Form } from "@/components/ui/form";
-import { Check } from "lucide-react";
-import { updateBuyerDetails, updateStep } from "../redux/addOrderSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { buyerSchema } from "../schemas/ValidationSchemas";
+import { useForm } from "react-hook-form";
+import { Form } from "@/components/ui/form";
 import { ButtonComp } from "../elements/ButtonComp";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AddressForm } from "../elements/AddressForm";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateChecked } from "../redux/addOrderSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { buyerSchema } from "../schemas/ValidationSchemas";
 import { BuyerComponent } from "../elements/BuyerComponent";
-
+import { updateBuyerDetails, updateStep } from "../redux/addOrderSlice";
 
 export const BuyerDetails = () => {
-  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
   const dispatch = useDispatch();
+  const checked = useSelector((state: RootState) => state.addOrder.buyerDetailsData.checked);
   const buyerDetails = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
 
-  const Schema= buyerSchema(checked)
+  const buyerDataSchema = buyerSchema(checked);
 
-  const form = useForm<z.infer<typeof Schema>>({
-    resolver: zodResolver(Schema),
+  const form = useForm<z.infer<typeof buyerDataSchema>>({
+    resolver: zodResolver(buyerDataSchema),
     defaultValues: buyerDetails,
   });
-
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(updateChecked(e.target.checked));
   };
 
-  const onSubmit = (values: z.infer<typeof Schema>) => {
+  const onSubmit = (values: z.infer<typeof buyerDataSchema>) => {
     dispatch(updateBuyerDetails(values));
     dispatch(updateStep(3));
   };
@@ -40,29 +38,29 @@ export const BuyerDetails = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <p className="text-base font-bold mb-2">Personal Details</p>
-         <BuyerComponent form={form}/>
+          <BuyerComponent form={form} />
           <p className="text-base font-bold mb-2 mt-6">Shipping Address</p>
-          <AddressForm form={form} isBillingAddress={false}/>
-          <div
-            className="flex items-center my-6 cursor-pointer lg:w-1/2"
-            onClick={() => handleCheckboxChange({ target: { checked: !checked } })}
-          >
-            <div
-              className={`w-5 h-5 border border-gray-400 flex items-center justify-center rounded-md ${
-                checked ? "bg-blue-500" : ""
-              }`}
-            >
-              {checked && <Check className="text-white size-4" />}
+          <AddressForm form={form} isBillingAddress={false} />
+            <div className="items-top flex my-6 space-x-2 cursor-pointer">
+              <Checkbox id="terms1" checked={checked} onClick={() => handleCheckboxChange({ target: { checked: !checked } })} />
+              <div className="grid gap-1.5 leading-none">
+                <label
+                  htmlFor="terms1"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mt-0.5 cursor-pointer"
+                >
+                  Billing Address is same as Shipping Address.
+                </label>
+              </div>
             </div>
-            <p className="ml-3 text-sm font-medium">Billing Address is same as Shipping Address.</p>
-          </div>
           {!checked && (
             <div>
-              <p className="font-bold text-base">Billing Address</p>
+              <p className="font-bold text-base mb-1">Billing Address</p>
               <AddressForm form={form} isBillingAddress={true} />
             </div>
           )}
-          <ButtonComp />
+          <div className="py-3">
+            <ButtonComp />
+          </div>
         </form>
       </Form>
     </div>

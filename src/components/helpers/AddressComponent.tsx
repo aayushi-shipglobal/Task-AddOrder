@@ -2,7 +2,7 @@ import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 
 const formatAddress = (addressFields: string[]): string => {
-  return addressFields.filter(Boolean).join(" ");
+  return addressFields.filter(Boolean).join(" , ");
 };
 
 export const AddressComponent = () => {

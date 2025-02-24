@@ -1,19 +1,19 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form } from "@/components/ui/form";
-import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
-import { OrderFormComponent } from "../elements/OrderFormComponent";
 import * as React from "react";
-import { updateCompleteOrderForm, updateOrderDetails, updateStep } from "../redux/addOrderSlice";
+import { RootState } from "@/store";
+import { useForm } from "react-hook-form";
+import { Form } from "@/components/ui/form";
+import DatePicker from "../elements/DatePicker";
 import { Button } from "@/components/ui/button";
 import ItemDetails from "../elements/ItemDetails";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store";
-import { orderSchema } from "../schemas/ValidationSchemas";
-import { validateOrderInvoice } from "../service/Services";
-import DatePicker from "../elements/DatePicker";
 import CurrencySelect from "../elements/CurrencySelect";
+import { validateOrderInvoice } from "../service/Services";
+import { orderSchema } from "../schemas/ValidationSchemas";
+import { OrderFormComponent } from "../elements/OrderFormComponent";
+import { updateOrderDetails, updateStep } from "../redux/addOrderSlice";
+import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
 
 const frameworks = [
   { value: "EUR", label: "EUR" },
@@ -25,10 +25,9 @@ const frameworks = [
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date | null>(null);
-  const [errorMessage, setErrorMessage] = React.useState("");
   const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = React.useState("");
   const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
-
 
   const form = useForm<z.infer<typeof orderSchema>>({
     resolver: zodResolver(orderSchema),
@@ -46,49 +45,40 @@ export const OrderDetails = () => {
 
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     if (!orderDetails || !itemDetails) return;
-  
+
     try {
       const result = await validateOrderInvoice(orderDetails, itemDetails);
-  
+
       if (result.data?.box?.["1"]?.exceeds_limit) {
         setErrorMessage(result.data.box["1"].exceeds_text);
         return;
       } else {
-        setErrorMessage(""); 
+        setErrorMessage("");
       }
-        dispatch(updateOrderDetails(values));
+      dispatch(updateOrderDetails(values));
       dispatch(updateStep(4));
-  
     } catch (error: any) {
       setErrorMessage(error.message || "There was an error while validating the order.");
     }
   };
-  
+
   return (
     <div className="px-3 md:px-7 py-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="text-black">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-2 gap-x-4">
             <OrderFormComponent control={form.control} label="Invoice No." name="invoiceNo" />
-              <DatePicker
-                control={form.control}
-                name="invoiceDate"
-                label="Invoice Date"
-                date={date}
-                setDate={setDate}
-              />
-              <CurrencySelect
-                control={form.control}
-                name="invoiceCurrency"
-                frameworks={frameworks}
-                label="Invoice Currency"
-                placeholder="INR"
-              />
-
+            <DatePicker control={form.control} name="invoiceDate" label="Invoice Date" date={date} setDate={setDate} />
+            <CurrencySelect
+              control={form.control}
+              name="invoiceCurrency"
+              frameworks={frameworks}
+              label="Invoice Currency"
+              placeholder="INR"
+            />
             <OrderFormComponent control={form.control} label="Order/Reference ID" name="orderId" />
             <OrderFormComponent control={form.control} label="IOSS Number:" name="iossNumber" />
           </div>
-
           <p className="text-base font-bold mt-6 mb-2">Box Measurements</p>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-2 gap-x-4">
             <ShipmentDetailsComponent
@@ -120,16 +110,13 @@ export const OrderDetails = () => {
               placeholder="Eg. 10"
             />
           </div>
-
           <div>
             <div className="flex gap-x-1 mt-6">
               <div className="font-bold text-base">Item(s) Details</div>
               <p className="bg-orange-50 text-red-500 rounded-md text-xs text-center p-1">Items that can export</p>
             </div>
-
             <ItemDetails form={form} errorMessage={errorMessage} />
           </div>
-
           <div className="flex justify-end mt-6">
             <Button
               type="submit"

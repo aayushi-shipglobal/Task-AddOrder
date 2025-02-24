@@ -67,7 +67,7 @@ export const ItemDetailsInformation = () => {
               </div>
 
               {orderData.items.length > 1 && (
-                <div className="flex gap-44 items-center mt-2">
+                <div className="flex gap-40 items-center mt-2">
                   {!isVisible && (
                     <div className="text-orange-500 text-xs">+{orderData.items.length - 1} more products...</div>
                   )}

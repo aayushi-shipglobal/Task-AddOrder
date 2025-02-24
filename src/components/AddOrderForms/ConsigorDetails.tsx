@@ -5,11 +5,11 @@ import { useForm } from "react-hook-form";
 import { Select } from "../elements/Select";
 import { Form } from "@/components/ui/form";
 import { Label } from "@radix-ui/react-label";
+import { ButtonComp } from "../elements/ButtonComp";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { consignorSchema } from "../schemas/ValidationSchemas";
 import { updatePickupAddress, updateStep } from "../redux/addOrderSlice";
-import { ButtonComp } from "../elements/ButtonComp";
 
 export const ConsignorDetails = () => {
   const dispatch = useDispatch();
