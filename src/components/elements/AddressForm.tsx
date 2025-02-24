@@ -1,6 +1,6 @@
 import { CountryApi } from "../service/CountryApi";
 import { StatesApi } from "../service/StatesApi";
-import { Statesapi2 } from "../service/Statesapi2";
+import { StatesApiBilling } from "../service/StatesApiBilling";
 import { FormComponent } from "./FormComponent";
 
 export const AddressForm = ({ form, isBillingAddress }) => {
@@ -10,7 +10,7 @@ export const AddressForm = ({ form, isBillingAddress }) => {
       <FormComponent name={isBillingAddress ? "address4" : "address2"} label="Address 2" form={form} />
       <FormComponent name={isBillingAddress ? "mark" : "landmark"} label="Landmark" form={form} />
       <CountryApi name={isBillingAddress ? "Country" : "country"} form={form} label="Country" />
-      {isBillingAddress ? <Statesapi2 name="state1" form={form} /> : <StatesApi name="state" form={form} />}
+      {isBillingAddress ? <StatesApiBilling name="state1" form={form} /> : <StatesApi name="state" form={form} />}
       <FormComponent name={isBillingAddress ? "city1" : "city"} label="City" form={form} />
       <FormComponent name={isBillingAddress ? "pincode1" : "pincode"} label="Pincode" form={form} />
     </div>

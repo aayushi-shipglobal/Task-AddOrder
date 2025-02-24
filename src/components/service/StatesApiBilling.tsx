@@ -9,7 +9,7 @@ type Props = {
   name: string;
 };
 
-export const Statesapi2 = ({ form, name }: Props) => {
+export const StatesApiBilling = ({ form, name }: Props) => {
   const [states, setStates] = useState<any[]>([]);
 
   const countrySelected = form.watch("Country");

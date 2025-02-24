@@ -32,9 +32,7 @@ function Combobox({ options, placeholder, field, disabled, name }: ComboboxProps
       }
     }
   }, [selectedOption, name]);
-
-
-
+  
   return (
     <Popover open={open && !disabled} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

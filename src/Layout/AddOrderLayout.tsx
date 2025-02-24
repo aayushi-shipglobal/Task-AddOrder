@@ -4,11 +4,11 @@ import BreadCrumb from "@/components/elements/BreadCrumb";
 import { updateStep } from "@/components/redux/addOrderSlice";
 import { Summary } from "@/components/informationSidebar/Summary";
 import { QuickTips } from "@/components/informationSidebar/QuickTips";
-import { BuyerDetails } from "@/components/addOrderForms/BuyerDetails";
-import { OrderDetails } from "@/components/addOrderForms/OrderDetails";
-import ShippingPartner from "@/components/addOrderForms/ShippingPartner";
+import { BuyerDetails } from "@/components/AddOrderForms/BuyerDetails";
+import { OrderDetails } from "@/components/AddOrderForms/OrderDetails";
+import ShippingPartner from "@/components/AddOrderForms/ShippingPartner";
 import { AccordionComponent } from "@/components/elements/AccordionComponent";
-import { ConsignorDetails } from "@/components/addOrderForms/ConsigorDetails";
+import { ConsignorDetails } from "@/components/AddOrderForms/ConsigorDetails";
 import { ConsignorInformation } from "@/components/informationSidebar/ConsignorInformation";
 import { ConsigneeInformation } from "@/components/informationSidebar/ConsigneeInformation";
 import { ItemDetailsInformation } from "@/components/informationSidebar/ItemDetailsInformation";
@@ -22,7 +22,6 @@ export const AddOrderLayout = () => {
       label: "Consignor Details",
       content: <ConsignorDetails />,
     },
-
     {
       label: "Consignee Details",
       content: <BuyerDetails />,
@@ -53,7 +52,6 @@ export const AddOrderLayout = () => {
               />
             ))}
           </div>
-
           <div className="flex-col w-1/3 hidden lg:block">
             <div className="bg-white max-h-screen rounded-md px-8 py-3 overflow-y-scroll">
               {activeStep === 1 && <QuickTips />}
