@@ -4,13 +4,13 @@ import { Form } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
+import { BuyerData } from "@/assets/interface/interface";
 import { ButtonComp } from "@/components/elements/ButtonComp";
 import { AddressForm } from "@/components/elements/AddressForm";
 import { updateChecked } from "@/components/redux/addOrderSlice";
 import { buyerSchema } from "@/components/schemas/ValidationSchemas";
 import { BuyerComponent } from "@/components/elements/BuyerComponent";
 import { updateBuyerDetails, updateStep } from "@/components/redux/addOrderSlice";
-import { BuyerData } from "@/assets/interface/interface";
 
 export const BuyerDetails = () => {
   const dispatch = useDispatch();
