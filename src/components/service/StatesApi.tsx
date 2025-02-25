@@ -1,9 +1,9 @@
 "use client";
 
-import { Required } from "../elements/Required";
+import { Required } from "@/components/elements/Required";
 import { fetchStatesByCountry } from "./Services";
 import { useState, useEffect, useRef } from "react";
-import { ComboboxDemo } from "../elements/ComboboxDemo";
+import { ComboboxDemo } from "@/components/elements/ComboboxDemo";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 type Framework = {

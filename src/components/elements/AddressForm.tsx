@@ -1,7 +1,7 @@
-import { CountryApi } from "../service/CountryApi";
-import { StatesApi } from "../service/StatesApi";
-import { StatesApiBilling } from "../service/StatesApiBilling";
-import { FormComponent } from "./FormComponent";
+import { CountryApi } from "@/components/service/CountryApi";
+import { StatesApi } from "@/components/service/StatesApi";
+import { StatesApiBilling } from "@/components/service/StatesApiBilling";
+import { FormComponent } from "@/components/elements/FormComponent";
 
 export const AddressForm = ({ form, isBillingAddress }) => {
   return (

@@ -2,14 +2,14 @@ import { z } from "zod";
 import { useEffect } from "react";
 import { RootState } from "@/store";
 import { useForm } from "react-hook-form";
-import { Select } from "../elements/Select";
 import { Form } from "@/components/ui/form";
 import { Label } from "@radix-ui/react-label";
-import { ButtonComp } from "../elements/ButtonComp";
+import { Select } from "@/components/elements/Select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
-import { consignorSchema } from "../schemas/ValidationSchemas";
-import { updatePickupAddress, updateStep } from "../redux/addOrderSlice";
+import { ButtonComp } from "@/components/elements/ButtonComp";
+import { consignorSchema } from "@/components/schemas/ValidationSchemas";
+import { updatePickupAddress, updateStep } from "@/components/redux/addOrderSlice";
 
 export const ConsignorDetails = () => {
   const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-export interface BuyerData {
+export interface BuyerData{
   firstName: string;
   lastName: string;
   mobileNo: string;
@@ -20,7 +20,7 @@ export interface BuyerData {
   checked: boolean;
 }
 
-export interface OrderData {
+ export interface OrderData {
   actualWeight: string;
   length: string;
   breadth: string;
@@ -40,3 +40,4 @@ export interface OrderData {
   }[];
   completeOrderForm: boolean;
 }
+

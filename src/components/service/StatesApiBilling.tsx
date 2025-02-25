@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ComboboxDemo } from "../elements/ComboboxDemo";
+import { ComboboxDemo } from "@/components/elements/ComboboxDemo";
 import { fetchStatesByCountry } from "./Services";
-import { Required } from "../elements/Required";
+import { Required } from "@/components/elements/Required";
 
 type Props = {
   form: any;

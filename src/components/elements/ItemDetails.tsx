@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useFieldArray } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Required } from "./Required";
 
 const ItemDetails = ({ form, errorMessage }) => {

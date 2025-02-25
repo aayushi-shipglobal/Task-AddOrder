@@ -1,7 +1,7 @@
 import { ComboBox } from "./ComboBox";
-import { customers } from "../array/array";
+import { customers } from "@/components/array/array";
 import { UseFormReturn } from "react-hook-form";
-import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 interface SelectProps {
   form: UseFormReturn<any>;

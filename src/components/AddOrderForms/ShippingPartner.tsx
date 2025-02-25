@@ -2,7 +2,7 @@ import { RootState } from "@/store";
 import { CircleCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ErrorMessage } from "../elements/ErrorMessage";
+import { ErrorMessage } from "@/components/elements/ErrorMessage";
 import { fetchShippers } from "@/components/service/Services";
 import { updateShippingPartner } from "@/components/redux/addOrderSlice";
 
@@ -71,7 +71,7 @@ function ShippingPartner() {
     <div className="px-3 md:px-7 py-4 text-sm">
       <p>
         All shipments via ShipGlobal services are <span className="font-bold">Delivered Duty Paid (DDP)</span>, hence
-        <span className="font-bold">no extra duty</span> will be billed on the consignee or the shipper. Rates are
+        <span className="font-bold"> no extra duty</span> will be billed on the consignee or the shipper. Rates are
         inclusive of covid & fuel surcharge, exclusive of GST and ex-Delhi Hub.
       </p>
       <p>

@@ -1,8 +1,8 @@
 import React from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import { AddressComponent } from "../helpers/AddressComponent";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { AddressComponent } from "@/components/helpers/AddressComponent";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const ConsigneeInformation = () => {
   const { formattedShippingAddress, formattedBillingAddress } = AddressComponent();

@@ -1,29 +1,28 @@
-import { z } from "zod";
 import * as React from "react";
 import { RootState } from "@/store";
 import { useForm } from "react-hook-form";
-import { frameworks } from "../array/array";
 import { Form } from "@/components/ui/form";
-import DatePicker from "../elements/DatePicker";
 import { Button } from "@/components/ui/button";
-import ItemDetails from "../elements/ItemDetails";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { frameworks } from "@/components/array/array";
 import { useDispatch, useSelector } from "react-redux";
-import CurrencySelect from "../elements/CurrencySelect";
-import { validateOrderInvoice } from "../service/Services";
-import { orderSchema } from "../schemas/ValidationSchemas";
-import { OrderFormComponent } from "../elements/OrderFormComponent";
-import { updateOrderDetails, updateStep } from "../redux/addOrderSlice";
-import { ShipmentDetailsComponent } from "../elements/ShipmentDetailsComponent";
+import { OrderData } from "@/assets/interface/interface";
+import DatePicker from "@/components/elements/DatePicker";
+import ItemDetails from "@/components/elements/ItemDetails";
+import CurrencySelect from "@/components/elements/CurrencySelect";
+import { validateOrderInvoice } from "@/components/service/Services";
+import { orderSchema } from "@/components/schemas/ValidationSchemas";
+import { OrderFormComponent } from "@/components/elements/OrderFormComponent";
+import { updateOrderDetails, updateStep } from "@/components/redux/addOrderSlice";
+import { ShipmentDetailsComponent } from "@/components/elements/ShipmentDetailsComponent";
 
 export const OrderDetails = () => {
   const [date, setDate] = React.useState<Date | null>(null);
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = React.useState("");
   const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
-  type OrderInterface = z.infer<typeof orderSchema>;
 
-  const form = useForm<OrderInterface>({
+  const form = useForm<OrderData>({
     resolver: zodResolver(orderSchema),
     defaultValues: orderDetails,
   });
@@ -37,7 +36,7 @@ export const OrderDetails = () => {
     igst: form.watch(`items.${index}.igst`),
   }));
 
-  const onSubmit = async (values: OrderInterface) => {
+  const onSubmit = async (values:OrderData) => {
     if (!orderDetails || !itemDetails) return;
 
     try {
@@ -55,7 +54,6 @@ export const OrderDetails = () => {
       setErrorMessage(error.message || "There was an error while validating the order.");
     }
   };
-
   return (
     <div className="px-3 md:px-7 py-4">
       <Form {...form}>

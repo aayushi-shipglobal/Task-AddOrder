@@ -1,7 +1,7 @@
 import React from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const ConsignorInformation = () => {
   const PickupAddress = useSelector((state: RootState) => state.addOrder.pickupAddress);
