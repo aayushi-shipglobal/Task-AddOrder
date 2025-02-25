@@ -1,0 +1,174 @@
+import { RootState } from "@/store";
+import { CircleCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ErrorMessage } from "@/components/elements/ErrorMessage";
+import { fetchShippers } from "@/components/service/Services";
+import { updateShippingPartner } from "@/components/redux/addOrderSlice";
+
+function ShippingPartner() {
+  const dispatch = useDispatch();
+  const currentStep = useSelector((state: RootState) => state.addOrder.step);
+  const orderDetails = useSelector((state: RootState) => state.addOrder.orderDetailsData);
+  const buyerInformation = useSelector((state: RootState) => state.addOrder.buyerDetailsData);
+  const selectedShippingProvider = useSelector((state: RootState) => state.addOrder.shippingPartner);
+
+  const [availableShippingOptions, setAvailableShippingOptions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const volumetricWeight =
+    (Number(orderDetails.length) * Number(orderDetails.breadth) * Number(orderDetails.height)) / 5000;
+
+  const fetchShippingRates = async () => {
+    const requestPayload = {
+      customer_shipping_country_code: buyerInformation.country,
+      customer_shipping_postcode: buyerInformation.pincode,
+      package_breadth: Number(orderDetails.breadth),
+      package_height: orderDetails.height,
+      package_length: Number(orderDetails.length),
+      package_weight: Number(orderDetails.actualWeight),
+    };
+
+    setIsLoading(true);
+
+    try {
+      const rates = await fetchShippers(requestPayload);
+      setAvailableShippingOptions(
+        rates.map((rate: any) => ({
+          name: rate.display_name,
+          deliveryTime: rate.transit_time,
+          price: rate.rate,
+          helper: rate.helper_text,
+        })),
+      );
+    } catch (err) {
+      console.error("Error fetching shipping options:", err);
+      setApiError("Failed to fetch shipping options. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (currentStep == 4) fetchShippingRates();
+  }, [currentStep]);
+
+  const handleShippingProviderSelection = (provider: any) => {
+    dispatch(
+      updateShippingPartner({
+        name: provider.name,
+        rate: provider.price,
+      }),
+    );
+  };
+
+  const handleSubmit = () => {
+    if (!selectedShippingProvider) return;
+    dispatch(updateShippingPartner(selectedShippingProvider));
+  };
+
+  return (
+    <div className="px-3 md:px-7 py-4 text-sm">
+      <p>
+        All shipments via ShipGlobal services are <span className="font-bold">Delivered Duty Paid (DDP)</span>, hence
+        <span className="font-bold"> no extra duty</span> will be billed on the consignee or the shipper. Rates are
+        inclusive of covid & fuel surcharge, exclusive of GST and ex-Delhi Hub.
+      </p>
+      <p>
+        In case of any doubt, please call/whatsapp at <span className="text-blue-800 font-semibold">011-422 77777</span>
+      </p>
+      <div className="flex flex-col md:flex-row items-center gap-2 justify-center px-10 md:px-32 mt-5">
+        <WeightCard label="Dead Weight" value={Number(orderDetails.actualWeight)} />
+        <WeightCard label="Volumetric Weight" value={volumetricWeight} />
+        <WeightCard
+          label="Billed Weight"
+          value={Math.max(Number(orderDetails.actualWeight), volumetricWeight)}
+          highlight
+        />
+      </div>
+      {isLoading && <p className="text-center mt-5">Loading available shipping options...</p>}
+      {apiError && <ErrorMessage apiError={apiError} />}
+      {availableShippingOptions.length==0 && <p className="text-center mt-5 font-semibold">No shipping options available.</p>}
+      {availableShippingOptions.length > 0 && (
+        <>
+          <p className="mt-5 font-semibold">
+            Showing {availableShippingOptions.length} {availableShippingOptions.length > 1 ? "results" : "result"}
+          </p>
+          <ShippingOptionsTable
+            options={availableShippingOptions}
+            onSelect={handleShippingProviderSelection}
+            selectedProvider={selectedShippingProvider}
+          />
+        </>
+      )}
+      <div className="flex justify-end py-5">
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className={`bg-blue-800 text-sm font-medium text-white rounded-md px-4 py-2 hover:bg-blue-800/90 ${
+            !selectedShippingProvider ? "opacity-35 cursor-not-allowed" : "opacity-100"
+          }`}
+          disabled={!selectedShippingProvider}
+        >
+          Pay and Order
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const WeightCard = ({ label, value, highlight = false }: { label: string; value: number; highlight?: boolean }) => (
+  <div
+    className={`border ${
+      highlight ? "border-orange-300 bg-orange-50 text-orange-400" : "border-gray-300 bg-gray-100 text-gray-500"
+    } text-center px-4 py-3 my-1 lg:my-0 lg:py2 w-40 lg:min-w-32 rounded-md`}
+  >
+    <p className="font-medium text-base">{value.toFixed(2)} KG</p>
+    <p className="text-xs font-medium ">{label}</p>
+  </div>
+);
+
+const ShippingOptionsTable = ({
+  options,
+  onSelect,
+  selectedProvider,
+}: {
+  options: any[];
+  onSelect: (provider: any) => void;
+  selectedProvider: any;
+}) => (
+  <table className="mt-5 w-full relative text-xs lg:text-sm border-separate border-spacing-y-2.5">
+    <thead>
+      <tr className="text-left text-slate-500 bg-slate-50">
+        <th className="p-4 border-t border-b border-l rounded-l-md font-normal">Courier Partner</th>
+        <th className="border-t border-b font-normal">Delivery Time</th>
+        <th className="border-t border-b font-normal">Shipment Rate</th>
+        <th className="border-t border-b border-r rounded-r-md pr-2 font-normal">Select</th>
+      </tr>
+    </thead>
+
+    {options.map((provider, index) => (
+      <tbody>
+      <tr>
+        <td className="absolute mt-2.5 w-full border-t bg-blue-50 border-x text-xs rounded-t-sm text-red-500 px-2 py-1">
+          Duties will be charged, if applicable
+        </td>
+      </tr>
+      <tr key={index} className="cursor-pointer" onClick={() => onSelect(provider)}>
+        <td className="font-medium pl-4 border-t border-b border-l rounded-l-md pt-6 text-sm">{provider.name}</td>
+        <td className="border-t border-b pt-6 text-sm">{provider.deliveryTime}</td>
+        <td className="border-t border-b pt-6 text-sm">Rs. {provider.price}</td>
+        <td className="border-t border-b border-r py-5 rounded-r-md pt-10">
+          <CircleCheck
+            className={`h-5 w-5 cursor-pointer transition-colors ${
+              selectedProvider?.name === provider.name ? "fill-green-500 text-white" : "text-white fill-gray-300"
+            }`}
+          />
+        </td>
+      </tr>
+    </tbody>
+    ))}
+  </table>
+);
+
+export default ShippingPartner;
